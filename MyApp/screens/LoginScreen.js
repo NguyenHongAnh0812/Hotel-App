@@ -42,6 +42,7 @@ const LoginScreen = () => {
   };
 
   return (
+    
     <View style={styles.container}>
       <Image
         source={require("../assets/logo.png")}
@@ -94,10 +95,13 @@ const LoginScreen = () => {
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
+      <Text onPress={handleCreateAccount} style={styles.forgotpasswordText}>
+          Forgot password?
+        </Text>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <Text style={styles.createAccountText}>
+      <Text style={styles.createAccountText} >
         Don't have an account?{" "}
         <Text onPress={handleCreateAccount} style={styles.createAccountLink}>
           Register Now
@@ -118,7 +122,8 @@ const styles = StyleSheet.create({
   logo: {
     width: 120,
     height: 120,
-    marginBottom: 40,
+    marginBottom: 20,
+    marginTop: 30,
   },
   title: {
     fontSize: 24,
@@ -126,6 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    flex:1,
     width: "100%",
     height: 40,
     borderColor: "#ccc",
@@ -143,21 +149,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#007bff",
     borderRadius: 8,
-    marginTop: 40,
+    marginTop: 30,
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
-  createAccountText: {
-    marginTop: 12,
+  forgotpasswordText: {
     color: "#007bff",
     fontSize: 16,
-    textDecorationLine: "underline",
+    textDecorationLine: "none",
+    marginTop:10,
+    textAlign:'center',
+    alignSelf: 'flex-end',
+  },
+  createAccountText: {
+    marginTop: 12,
+    color: "#000000",
+    fontSize: 16,
+    textDecorationLine: "none",
     marginTop:30,
     textAlign: "center",
     alignSelf: "center",
+  },
+  createAccountLink: {
+    color: "#007bff",
   },
   socialButtonsContainer: {
     marginTop: 20,

@@ -1,33 +1,79 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from "react";
+import {
+  View,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet,
+  Image,
+  Text,
+  TouchableOpacity,
+  CheckBox,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const RegisterScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setname] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigation = useNavigation();
-
+  const [selectedGender, setSelectedGender] = useState("");
   const handleRegister = () => {
-    Alert.alert('Bạn đẵ đăng ký tài khoản thành công. Hãy đăng nhập nào !');
-    navigation.navigate('Login');
+    Alert.alert("Bạn đã đăng ký tài khoản thành công. Hãy đăng nhập nào !");
+    navigation.navigate("Login");
   };
-
+  const handleLogin = () => {
+    navigation.navigate("Login");
+  };
+  const handleGenderChange = (gender) => {
+    setSelectedGender(gender);
+  };
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../assets/logo.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Text style={styles.title}>Register Now!</Text>
+      <Text style={{ fontSize: 15, color: "#a9a9a9", marginBottom: 20 }}>
+        Enter your information below
+      </Text>
       <TextInput
         style={styles.input}
-        placeholder="Tên người dùng"
+        placeholder="Name"
+        onChangeText={(text) => setUsername(text)}
+        value={name}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Enter email"
         onChangeText={(text) => setUsername(text)}
         value={username}
       />
       <TextInput
         style={styles.input}
-        placeholder="Mật khẩu"
+        placeholder="Enter Password"
         secureTextEntry={true}
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
-      <Button title="Đăng ký" onPress={handleRegister} />
+      <TextInput
+        style={styles.input}
+        placeholder="Phone Number"
+        value={Number}
+        // onChangeText={handlePhoneNumberChange}
+      />
+      
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <Text style={styles.createAccountText}>
+        Don't have an account?{" "}
+        <Text onPress={handleLogin} style={styles.createAccountLink}>
+          Register Now
+        </Text>
+      </Text>
     </View>
   );
 };
@@ -35,17 +81,90 @@ const RegisterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
     paddingHorizontal: 16,
+    backgroundColor: "#fff",
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+    marginTop: 30,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 40,
-    borderColor: 'gray',
+    borderColor: "#ccc",
     borderWidth: 1,
+    marginTop: 10,
     marginBottom: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+  },
+  button: {
+    width: "100%",
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#007bff",
+    borderRadius: 8,
+    marginTop: 30,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  forgotpasswordText: {
+    color: "#007bff",
+    fontSize: 16,
+    textDecorationLine: "none",
+    marginTop: 10,
+    textAlign: "center",
+    alignSelf: "flex-end",
+  },
+  createAccountText: {
+    marginTop: 12,
+    color: "#000000",
+    fontSize: 16,
+    textDecorationLine: "none",
+    marginTop: 30,
+    textAlign: "center",
+    alignSelf: "center",
+  },
+  createAccountLink: {
+    color: "#007bff",
+  },
+  socialButtonsContainer: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  socialButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderWidth: 3,
+    borderColor: "#f5f5f5",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginHorizontal: 8,
+    marginBottom: 20,
+    flex: 1,
+  },
+  socialButtonText: {
+    color: "#000",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
