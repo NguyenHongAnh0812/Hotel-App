@@ -17,22 +17,12 @@ import { BottomNavigation } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./LoginScreen";
 import WelcomeScreen from "./WelcomeScreen";
-import { NavigationContainer } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const HomePageScreen = () => {
   const [index, setIndex] = useState(0);
   const Tab = createBottomTabNavigator();
-  const routes = [
-    { key: "home", title: "Home", icon: "home" },
-    { key: "search", title: "Search", icon: "magnify" },
-    { key: "profile", title: "Profile", icon: "account" },
-  ];
-
-  const renderScene = BottomNavigation.SceneMap({
-    home: () => <Text>Home Screen</Text>,
-    search: () => <Text>Search Screen</Text>,
-    profile: () => <Text>Profile Screen</Text>,
-  });
+  const navigation = useNavigation();
   const bestHotels = [
     {
       id: 1,
@@ -130,7 +120,10 @@ const HomePageScreen = () => {
     },
     // Thêm các mục ảnh khác vào đây
   ];
-
+  const handleDetail = () => {
+    // Điều hướng sang trang đăng ký
+    navigation.navigate("HotelDetail");
+  };
   const renderImageItem = ({ item }) => (
     <View style={styles.imageContainer}>
       <Image source={item.source} style={styles.image} />
@@ -157,8 +150,8 @@ const HomePageScreen = () => {
         <Text style={styles.locationText}>{item.location}</Text>
       </View>
       <Text style={styles.hotelPrice}>${item.price}/night</Text>
-      <TouchableOpacity style={styles.bookButton}>
-        <Text style={styles.bookButtonText}>Detail</Text>
+      <TouchableOpacity onPress={handleDetail} style={styles.bookButton}>
+        <Text  style={styles.bookButtonText}>Detail</Text>
       </TouchableOpacity>
     </View>
   );
@@ -184,8 +177,8 @@ const HomePageScreen = () => {
         </View>
         <Text style={styles.hotelPrice1}>${item.price}/night</Text>
       </View>
-      <TouchableOpacity style={styles.bookButton1}>
-        <Text style={styles.bookButtonText1}>Detail</Text>
+      <TouchableOpacity onPress={handleDetail} style={styles.bookButton1}>
+        <Text  style={styles.bookButtonText1}>Detail</Text>
       </TouchableOpacity>
     </View>
   );
@@ -432,11 +425,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     width: "90%",
-    padding: 16,
     height: 200,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginBottom: 16,
     backgroundColor: "white",
     borderRadius: 8,
     padding: 16,
@@ -451,7 +442,6 @@ const styles = StyleSheet.create({
     width: "50%",
     height: "100%",
     borderRadius: 8,
-    marginBottom: 16,
     alignSelf: "center",
   },
   hotelTitle: {

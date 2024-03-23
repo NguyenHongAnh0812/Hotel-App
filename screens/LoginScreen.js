@@ -26,7 +26,10 @@ const LoginScreen = () => {
     } else {
       Alert.alert("Đăng nhập thất bại");
     }
-    navigation.navigate('HomePage');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "HomePage" }],
+    });
   };
 
   const handleCreateAccount = () => {
