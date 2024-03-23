@@ -22,9 +22,11 @@ const LoginScreen = () => {
     // Kiểm tra tên người dùng và mật khẩu ở đây
     if (username === "admin" && password === "password") {
       Alert.alert("Đăng nhập thành công");
+      
     } else {
       Alert.alert("Đăng nhập thất bại");
     }
+    navigation.navigate('HomePage');
   };
 
   const handleCreateAccount = () => {
