@@ -106,6 +106,38 @@ const HotelDetailScreen = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
         />
+        <View style={styles.infoDescription}>
+          <Text style={styles.infoDescriptionLabel}>Overview</Text>
+          <Text style={styles.infoDescriptionText}>
+            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
+            Situated along the pristine shoreline, our beachfront hotel offers
+            breathtaking views of the golden sunsets and gentle waves.
+          </Text>
+        </View>
+        <View style={styles.infoDescription}>
+          <Text style={styles.infoDescriptionLabel}>Overview</Text>
+          <Text style={styles.infoDescriptionText}>
+            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
+            Situated along the pristine shoreline, our beachfront hotel offers
+            breathtaking views of the golden sunsets and gentle waves.
+          </Text>
+        </View>
+        <View style={styles.infoDescription}>
+          <Text style={styles.infoDescriptionLabel}>Overview</Text>
+          <Text style={styles.infoDescriptionText}>
+            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
+            Situated along the pristine shoreline, our beachfront hotel offers
+            breathtaking views of the golden sunsets and gentle waves.
+          </Text>
+        </View>
+        <View style={styles.infoDescription}>
+          <Text style={styles.infoDescriptionLabel}>Overview</Text>
+          <Text style={styles.infoDescriptionText}>
+            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
+            Situated along the pristine shoreline, our beachfront hotel offers
+            breathtaking views of the golden sunsets and gentle waves.
+          </Text>
+        </View>
       </ScrollView>
       <View style={styles.tabBottom}>
         <Text style={styles.price}>$100/Night</Text>
