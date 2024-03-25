@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,35 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  Alert,
+  Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-
+import { useNavigation } from "@react-navigation/native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 const HotelDetailScreen = () => {
+  const navigation = useNavigation();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const handleSelectDate = () => {
+    setShowDatePicker(true);
+  };
+  const showAlertAndWait = () => {
+    return new Promise((resolve) => {
+      Alert.alert("Booking Time: " + selectedDate.toLocaleDateString(), "", [
+        { text: "NEXT", onPress: resolve },
+      ]);
+    });
+  };
+  const handleDateChange = async (event, date) => {
+    if (date !== undefined) {
+      setShowDatePicker(false);
+      setSelectedDate(date);
+      await showAlertAndWait();
+      navigation.navigate("HomePage");
+    }
+    // setShowDatePicker(false);
+  };
   const images = [
     {
       id: 1,
@@ -114,11 +139,11 @@ const HotelDetailScreen = () => {
             source={{
               uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
             }}
-            style={{width:70,height:70,borderRadius:50}}
+            style={{ width: 70, height: 70, borderRadius: 50 }}
           />
         </View>
         <View style={styles.infoDescription}>
-          <Text style={{marginLeft:15,fontSize:15,fontWeight:'bold'}}>
+          <Text style={{ marginLeft: 15, fontSize: 15, fontWeight: "bold" }}>
             2 guests - 1 bedroom - 1 bed - 1 badthroom
           </Text>
         </View>
@@ -183,12 +208,35 @@ const HotelDetailScreen = () => {
       </ScrollView>
       <View style={styles.tabBottom}>
         <Text style={styles.price}>$100/Night</Text>
-        <TouchableOpacity
-          style={styles.bookButton}
-          onPress={() => console.log("Booking button pressed")}
-        >
-          <Text style={styles.bookButtonText}>Booking</Text>
+        <TouchableOpacity style={styles.bookButton} onPress={handleSelectDate}>
+          <Text style={styles.bookButtonText}>Select Date</Text>
         </TouchableOpacity>
+        {showDatePicker && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showDatePicker}
+            onRequestClose={() => setShowDatePicker(false)}
+          >
+            <TouchableOpacity
+              style={styles.modalContainer}
+              activeOpacity={1}
+              onPressOut={() => setShowDatePicker(false)}
+            >
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={handleDateChange}
+                  textColor="black"
+                  backgroundColor="#000"
+                  borderRadius="20"
+                  justifyContent="center"
+                  alignItems="center"
+                />
+            </TouchableOpacity>
+          </Modal>
+        )}
       </View>
     </View>
   );
@@ -325,6 +373,22 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  datePickerContainer: {
+    backgroundColor: "white",
+    padding: 16,
+    borderRadius: 8,
+    width: 200,
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#000",
   },
 });
 export default HotelDetailScreen;
