@@ -255,8 +255,8 @@ const HomePageScreen = () => {
           <Text>Booking</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => console.log("About button pressed")}>
-          <Icon name="info-circle" size={20} color="black" />
-          <Text>About</Text>
+          <Icon name="bell" size={20} color="black" />
+          <Text>Notification</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',}} onPress={() => console.log("Account button pressed")}>
           <Icon name="user" size={20} color="black" />
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     width: "100%",
-    height: 150,
+    height: 170,
     justifyContent: "center",
     alignItems: "center",
     borderBottomLeftRadius: 20,
@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: 18,
     color: "#fff",
+    marginTop:20,
   },
   searchContainer1: {
     width: "90%",

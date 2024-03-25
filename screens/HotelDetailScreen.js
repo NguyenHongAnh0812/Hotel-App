@@ -82,7 +82,7 @@ const HotelDetailScreen = () => {
           ))}
           <Text style={{ marginLeft: 10 }}>4.0 (120 Review)</Text>
         </View>
-        <Text style={styles.title}>Hotel Name</Text>
+        <Text style={styles.title}>Luxyry Hotel</Text>
         <View style={styles.locationContainer}>
           <Icon name="map-marker" size={16} color="gray" />
           <Text style={styles.locationText}>Đà Nẵng, Việt Nam</Text>
@@ -106,37 +106,79 @@ const HotelDetailScreen = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
         />
+        <View style={styles.containerHeaderPhoto}>
+          <Text style={styles.headerPhotoText1}>
+            Room in boutique hotel hosted by AnhRon
+          </Text>
+          <Image
+            source={{
+              uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
+            }}
+            style={{width:70,height:70,borderRadius:50}}
+          />
+        </View>
         <View style={styles.infoDescription}>
-          <Text style={styles.infoDescriptionLabel}>Overview</Text>
-          <Text style={styles.infoDescriptionText}>
-            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
-            Situated along the pristine shoreline, our beachfront hotel offers
-            breathtaking views of the golden sunsets and gentle waves.
+          <Text style={{marginLeft:15,fontSize:15,fontWeight:'bold'}}>
+            2 guests - 1 bedroom - 1 bed - 1 badthroom
           </Text>
         </View>
         <View style={styles.infoDescription}>
-          <Text style={styles.infoDescriptionLabel}>Overview</Text>
-          <Text style={styles.infoDescriptionText}>
-            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
-            Situated along the pristine shoreline, our beachfront hotel offers
-            breathtaking views of the golden sunsets and gentle waves.
+          <View style={styles.infoDescriptionHeader}>
+            <Icon
+              name="rocket"
+              size={25}
+              color="#000"
+              style={{ alignSelf: "flex-start", marginRight: 10 }}
+            />
+            <Text style={styles.infoDescriptionLabel1}>Enhanced Clean</Text>
+          </View>
+          <Text style={styles.infoDescriptionText1}>
+            This host committed to Airbnb's clone 5-step enhanced cleaning
+            process.
           </Text>
         </View>
         <View style={styles.infoDescription}>
-          <Text style={styles.infoDescriptionLabel}>Overview</Text>
-          <Text style={styles.infoDescriptionText}>
-            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
-            Situated along the pristine shoreline, our beachfront hotel offers
-            breathtaking views of the golden sunsets and gentle waves.
+          <View style={styles.infoDescriptionHeader}>
+            <Icon
+              name="map-marker"
+              size={25}
+              color="#000"
+              style={{ alignSelf: "flex-start", marginRight: 15 }}
+            />
+            <Text style={styles.infoDescriptionLabel1}>Great Location</Text>
+          </View>
+          <Text style={styles.infoDescriptionText1}>
+            95% of recent guests give the location a 5-star rating.
           </Text>
         </View>
         <View style={styles.infoDescription}>
-          <Text style={styles.infoDescriptionLabel}>Overview</Text>
-          <Text style={styles.infoDescriptionText}>
-            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
-            Situated along the pristine shoreline, our beachfront hotel offers
-            breathtaking views of the golden sunsets and gentle waves.
+          <View style={styles.infoDescriptionHeader}>
+            <Icon
+              name="key"
+              size={25}
+              color="#000"
+              style={{ alignSelf: "flex-start", marginRight: 10 }}
+            />
+            <Text style={styles.infoDescriptionLabel1}>
+              Great check-in-experience
+            </Text>
+          </View>
+          <Text style={styles.infoDescriptionText1}>
+            90% of recent duests gave the check-im process a 5-star rating.
           </Text>
+        </View>
+        <View style={styles.infoDescription}>
+          <View style={styles.infoDescriptionHeader}>
+            <Icon
+              name="calendar"
+              size={25}
+              color="#000"
+              style={{ alignSelf: "flex-start", marginRight: 10, marginTop: 5 }}
+            />
+            <Text style={styles.infoDescriptionLabel1}>
+              Free cancellation until 2:00 PM on 8 May
+            </Text>
+          </View>
         </View>
       </ScrollView>
       <View style={styles.tabBottom}>
@@ -161,7 +203,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 10,
-    height: 200,
+    height: 250,
     marginBottom: 16,
   },
   hotelRating: {
@@ -193,15 +235,30 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#d9d9d9",
   },
+  infoDescriptionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   infoDescriptionLabel: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 8,
     marginLeft: 15,
   },
+  infoDescriptionLabel1: {
+    fontSize: 20,
+    // fontWeight: "bold",
+    width: "90%",
+    marginBottom: 8,
+    marginLeft: 15,
+  },
   infoDescriptionText: {
     fontSize: 14,
     marginLeft: 15,
+  },
+  infoDescriptionText1: {
+    fontSize: 14,
+    marginLeft: 50,
   },
   photoContainer: {
     marginRight: 5,
@@ -228,28 +285,33 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 21,
   },
+  headerPhotoText1: {
+    fontWeight: "bold",
+    fontSize: 21,
+    width: "70%",
+  },
   linkPhotoText: {
     color: "blue",
     textDecorationLine: "none",
   },
   tabBottom: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingBottom: 16,
     borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    borderTopColor: "#ccc",
     height: 80,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    borderWidth:1,
-    borderColor:"#d9d9d9",
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
   },
   price: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginTop: 10,
   },
   bookButton: {
@@ -257,7 +319,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    marginTop:10,
+    marginTop: 10,
   },
   bookButtonText: {
     color: "white",

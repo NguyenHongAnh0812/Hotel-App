@@ -9,12 +9,13 @@ import RegisterScreen from './screens/RegisterScreen'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomePageScreen from './screens/HomePageScreen';
 import HotelDetailScreen from './screens/HotelDetailScreen';
+import DatePickerScreen from './screens/DatePickerScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Loading' screenOptions={{ headerShown: false }} >
+      <Stack.Navigator initialRouteName='DatePicker' screenOptions={{ headerShown: false }} >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="HomePage" component={HomePageScreen} />
         <Stack.Screen name="HotelDetail" component={HotelDetailScreen} />
+        <Stack.Screen name="DatePicker" component={DatePickerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
