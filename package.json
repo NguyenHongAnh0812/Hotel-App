@@ -17,6 +17,7 @@
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-native": "0.73.6",
+    "react-native-checkbox": "^2.0.0",
     "react-native-checkbox-group": "^1.0.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^3.4.3",

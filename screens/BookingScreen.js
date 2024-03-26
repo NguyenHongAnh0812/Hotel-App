@@ -9,16 +9,38 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { CheckBox } from "react-native-elements";
 
 const BookingScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [nameVisa, setNameVisa] = useState("Visa card not added yet");
   const [number, setNumber] = useState(6);
-  const s=">";
+  const s = ">";
+  const [isChecked, setIsChecked] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [isBookingSuccessVisible, setIsBookingSuccessVisible] = useState(false);
+  const navigation = useNavigation();
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const handleAddToCart = () => {
+    setNameVisa(cardName);
+    setIsModalVisible(false);
+    setNameVisa(cardName);
+    setCardNumber("");
+    setCardName("");
+    setExpiryDate("");
+  };
 
   const increaseNumber = () => {
     setNumber(number + 1);
@@ -37,6 +59,15 @@ const BookingScreen = () => {
       setShowDatePicker(false);
       setSelectedDate(date);
     }
+  };
+  const toggleCheckbox = () => {
+    setIsChecked(!isChecked);
+  };
+  const handleBackToHome = () => {
+    navigation.navigate("HomePage");
+  };
+  const handleBookingSuccess = () => {
+    setIsBookingSuccessVisible(false);
   };
   const item = {
     id: 1,
@@ -72,7 +103,7 @@ const BookingScreen = () => {
           <Text style={styles.hotelPrice1}>${item.price}/night</Text>
         </View>
       </View>
-      <ScrollView>
+      <ScrollView style={{ flex: 1 }}>
         <View style={styles.containerHeader}>
           <Text style={styles.headerText}>Your Booking Details</Text>
         </View>
@@ -130,35 +161,193 @@ const BookingScreen = () => {
           </View>
         </View>
         <View style={styles.containerHeader}>
+          <Text style={styles.headerText}>Chose how to pay</Text>
+        </View>
+        <View style={{ marginLeft: 36 }}>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#000",
+              fontWeight: "bold",
+              marginTop: 10,
+            }}
+          >
+            Pay in full
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ fontSize: 15, color: "#454545" }}>
+              Pay the total now and you're all set.
+            </Text>
+            <CheckBox checked={isChecked} onPress={toggleCheckbox} />
+          </View>
+        </View>
+        <View style={{ marginLeft: 36 }}>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#000",
+              fontWeight: "bold",
+              marginTop: 10,
+            }}
+          >
+            Pay pat now, part later
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ fontSize: 15, color: "#454545" }}>
+              Pay part now and you're all set.
+            </Text>
+            <CheckBox checked={!isChecked} onPress={toggleCheckbox} />
+          </View>
+        </View>
+        <View style={styles.containerHeader}>
+          <Text style={styles.headerText}>Pay with</Text>
+        </View>
+        <View style={{ marginLeft: 36 }}>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#000",
+              fontWeight: "bold",
+              marginTop: 10,
+            }}
+          >
+            Payment with Visa
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ fontSize: 15, color: "#454545" }}>{nameVisa}</Text>
+            <TouchableOpacity
+              onPress={toggleModal}
+              style={{
+                backgroundColor: "#fff",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                borderRadius: 5,
+                borderWidth: 1,
+                borderColor: "#000",
+                marginRight: 10,
+              }}
+            >
+              <Text style={{ color: "#000", fontWeight: "bold" }}>Add</Text>
+            </TouchableOpacity>
+            <Modal
+              visible={isModalVisible}
+              onRequestClose={toggleModal}
+              transparent
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>Add to Cart</Text>
+                  <TextInput
+                    placeholder="Card Number"
+                    value={cardNumber}
+                    onChangeText={setCardNumber}
+                    style={styles.input}
+                  />
+                  <TextInput
+                    placeholder="Card Name"
+                    value={cardName}
+                    onChangeText={setCardName}
+                    style={styles.input}
+                  />
+                  <TextInput
+                    placeholder="Expiry Date"
+                    value={expiryDate}
+                    onChangeText={setExpiryDate}
+                    style={styles.input}
+                  />
+                  <TouchableOpacity
+                    onPress={handleAddToCart}
+                    style={styles.addButton}
+                  >
+                    <Text style={styles.addButtonText}>Add to Cart</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={toggleModal}
+                    style={styles.cancelButton}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </View>
+        </View>
+        <View style={styles.containerHeader}>
           <Text style={styles.headerText}>Price Details</Text>
         </View>
         <View style={styles.infoDescription}>
-          <View style={styles.infoDescriptionPrice} >
-            <Text style={styles.infoDescriptionTextPrice} >$100</Text>
-            <Text style={styles.infoDescriptionTextPrice} >$100</Text>
+          <View style={styles.infoDescriptionPrice}>
+            <Text style={styles.infoDescriptionTextPrice}>$100</Text>
+            <Text style={styles.infoDescriptionTextPrice}>$100</Text>
           </View>
-          <View style={styles.infoDescriptionPrice} >
-            <Text style={styles.infoDescriptionTextPrice} >Discount</Text>
-            <Text style={styles.infoDescriptionTextPrice} >- $10</Text>
+          <View style={styles.infoDescriptionPrice}>
+            <Text style={styles.infoDescriptionTextPrice}>Discount</Text>
+            <Text style={styles.infoDescriptionTextPrice}>- $10</Text>
           </View>
-          <View style={styles.infoDescriptionPrice} >
-            <Text style={styles.infoDescriptionTextPrice} >Bonus ( {s} 5 guest )</Text>
-            <Text style={styles.infoDescriptionTextPrice} > + $50</Text>
+          <View style={styles.infoDescriptionPrice}>
+            <Text style={styles.infoDescriptionTextPrice}>
+              Bonus ( {s} 5 guest )
+            </Text>
+            <Text style={styles.infoDescriptionTextPrice}> + $50</Text>
           </View>
         </View>
-        <View style={styles.infoDescriptionTotal} >
-            <Text style={styles.infoDescriptionTextPrice} >Total</Text>
-            <Text style={styles.infoDescriptionTextPrice} >$140</Text>
-          </View>
+        <View style={styles.infoDescriptionTotal}>
+          <Text style={styles.infoDescriptionTextPrice}>Total</Text>
+          <Text style={styles.infoDescriptionTextPrice}>$140</Text>
+        </View>
       </ScrollView>
       <View style={styles.tabBottom}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.price}>Grand Total</Text>
           <Text style={styles.price}>$140</Text>
         </View>
-        <TouchableOpacity style={styles.bookButton}>
+        <TouchableOpacity
+          onPress={() => setIsBookingSuccessVisible(!isBookingSuccessVisible)}
+          style={styles.bookButton}
+        >
           <Text style={styles.bookButtonText}>Pay Now</Text>
         </TouchableOpacity>
+        <Modal
+          visible={isBookingSuccessVisible}
+          onRequestClose={handleBookingSuccess}
+          transparent
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.bookingSuccessContent}>
+              <View style={styles.circle}>
+                <Icon name="check" size={20} color="#fff" />
+              </View>
+              <Text style={styles.bookingSuccessText}>Payment Received</Text>
+              <Text style={styles.bookingSuccessText}>Successfully</Text>
+              <Text >Congratulations</Text>
+              <Text style={{marginBottom:30,}} >Your booking has been confirmed</Text>
+              <TouchableOpacity
+                onPress={handleBookingSuccess}
+                style={styles.okButton}
+              >
+                <Text onPress={handleBackToHome} style={styles.okButtonText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -244,10 +433,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderWidth: 1,
     borderColor: "#d9d9d9",
-    position: "absolute",
-    bottom: 0,
+    // position: "absolute",
+    // bottom: 0,
     width: "100%",
-    marginTop: 90,
+    marginTop: 20,
   },
   price: {
     fontSize: 18,
@@ -281,7 +470,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: "bold",
-    fontSize: 21,
+    fontSize: 20,
   },
   infoDescription: {
     marginTop: 20,
@@ -300,7 +489,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     // marginBottom: 8,
-    color: "#a9a9a9",
+    color: "#000",
     marginLeft: 16,
     width: "20%",
     // alignSelf: 'flex-start',
@@ -310,7 +499,7 @@ const styles = StyleSheet.create({
   infoDescriptionText: {
     fontSize: 14,
     // marginRight: 150,
-    color: "#a9a9a9",
+    color: "#454545",
     // alignSelf: "center",
     width: "60%",
   },
@@ -318,7 +507,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     // marginRight: 150,
     paddingLeft: 20,
-    color: "#a9a9a9",
+    color: "#454545",
     // alignSelf: "center",
     width: "60%",
   },
@@ -367,20 +556,101 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   infoDescriptionPrice: {
-    flexDirection:'row',
-    justifyContent:'space-between',
-    marginLeft:20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginLeft: 20,
     marginRight: 20,
   },
   infoDescriptionTextPrice: {
-    fontSize:15,
-    color:'#a9a9a9',
+    fontSize: 15,
+    color: "#454545",
   },
-  infoDescriptionTotal:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    marginLeft:36,
+  infoDescriptionTotal: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginLeft: 36,
     marginRight: 36,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    height: 350,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 30,
+    alignSelf: "center",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginBottom: 10,
+  },
+  addButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  addButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    color: "#000",
+  },
+  bookingSuccessContent: {
+    width: 300,
+    height: 350,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bookingSuccessText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  okButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: 100,
+    height: 40,
+    justifyContent: "center",
+  },
+  okButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    // alignSelf:
+  },
+  circle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#00cc00',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:20,
   }
 });
 export default BookingScreen;

@@ -33,6 +33,7 @@ const HomePageScreen = () => {
       rating: 3,
       location: "Đà Nẵng, Việt Nam",
       price: 100,
+      review : "3.0 (115 Review)"
     },
     {
       id: 2,
@@ -43,6 +44,7 @@ const HomePageScreen = () => {
       location: "Vũng Tàu, Việt Nam",
       rating: 4,
       price: 120,
+      review : "4.0 (96 Review)"
     },
     {
       id: 3,
@@ -53,6 +55,7 @@ const HomePageScreen = () => {
       location: "Quất Lâm, Giao Thuỷ, Nam Định, Việt Nam",
       rating: 5,
       price: 150,
+      review : "5.0 (60 Review)"
     },
     {
       id: 4,
@@ -63,6 +66,7 @@ const HomePageScreen = () => {
       location: "Phố Cổ, Hà Nội, Việt Nam",
       rating: 3,
       price: 200,
+      review : "3.0 (120 Review)"
     },
     {
       id: 5,
@@ -73,6 +77,7 @@ const HomePageScreen = () => {
       location: "TP.Hồ Chí Minh, Việt Nam",
       rating: 4,
       price: 250,
+      review : "4.0 (200 Review)"
     },
   ];
   const images = [
@@ -142,7 +147,9 @@ const HomePageScreen = () => {
               color={star <= item.rating ? "gold" : "gray"}
             />
           </TouchableOpacity>
+
         ))}
+        <Text style={{ marginLeft: 10 }}>{item.review}</Text>
       </View>
       <Text style={styles.hotelName}>{item.name}</Text>
       <View style={styles.locationContainer}>
@@ -169,7 +176,9 @@ const HomePageScreen = () => {
               />
             </TouchableOpacity>
           ))}
+          
         </View>
+        <Text style={{ }}>{item.review}</Text>
         <Text style={styles.hotelName1}>{item.name}</Text>
         <View style={styles.locationContainer1}>
           <Icon name="map-marker" size={16} color="gray" />
@@ -250,7 +259,7 @@ const HomePageScreen = () => {
           <Icon name="home" size={20} color="black" />
           <Text>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => console.log("Booking button pressed")}>
+        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => navigation.navigate("ListBooking")}>
           <Icon name="calendar" size={20} color="black" />
           <Text>Booking</Text>
         </TouchableOpacity>

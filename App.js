@@ -10,11 +10,12 @@ import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomePageScreen from './screens/HomePageScreen';
 import HotelDetailScreen from './screens/HotelDetailScreen';
 import BookingScreen from './screens/BookingScreen'
+import ListBookingScreen from './screens/ListBookingScreen';
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Loading' screenOptions={{ headerShown: false }} >
+      <Stack.Navigator initialRouteName='ListBooking' screenOptions={{ headerShown: false }} >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="HomePage" component={HomePageScreen} />
         <Stack.Screen name="HotelDetail" component={HotelDetailScreen} />
         <Stack.Screen name="Booking" component={BookingScreen} />
+        <Stack.Screen name="ListBooking" component={ListBookingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
