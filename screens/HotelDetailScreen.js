@@ -18,7 +18,8 @@ const HotelDetailScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const handleSelectDate = () => {
-    setShowDatePicker(true);
+    navigation.navigate("Booking");
+    // setShowDatePicker(true);
   };
   const showAlertAndWait = () => {
     return new Promise((resolve) => {
@@ -32,7 +33,7 @@ const HotelDetailScreen = () => {
       setShowDatePicker(false);
       setSelectedDate(date);
       await showAlertAndWait();
-      navigation.navigate("HomePage");
+      navigation.navigate("Booking");
     }
     // setShowDatePicker(false);
   };
@@ -209,20 +210,9 @@ const HotelDetailScreen = () => {
       <View style={styles.tabBottom}>
         <Text style={styles.price}>$100/Night</Text>
         <TouchableOpacity style={styles.bookButton} onPress={handleSelectDate}>
-          <Text style={styles.bookButtonText}>Select Date</Text>
+          <Text style={styles.bookButtonText}>Booking</Text>
         </TouchableOpacity>
         {showDatePicker && (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={showDatePicker}
-            onRequestClose={() => setShowDatePicker(false)}
-          >
-            <TouchableOpacity
-              style={styles.modalContainer}
-              activeOpacity={1}
-              onPressOut={() => setShowDatePicker(false)}
-            >
                 <DateTimePicker
                   value={selectedDate}
                   mode="date"
@@ -234,8 +224,6 @@ const HotelDetailScreen = () => {
                   justifyContent="center"
                   alignItems="center"
                 />
-            </TouchableOpacity>
-          </Modal>
         )}
       </View>
     </View>

@@ -9,7 +9,7 @@ import RegisterScreen from './screens/RegisterScreen'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomePageScreen from './screens/HomePageScreen';
 import HotelDetailScreen from './screens/HotelDetailScreen';
-
+import BookingScreen from './screens/BookingScreen'
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
@@ -22,6 +22,7 @@ export default function App() {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="HomePage" component={HomePageScreen} />
         <Stack.Screen name="HotelDetail" component={HotelDetailScreen} />
+        <Stack.Screen name="Booking" component={BookingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
