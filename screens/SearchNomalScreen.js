@@ -19,7 +19,7 @@ import LoginScreen from "./LoginScreen";
 import WelcomeScreen from "./WelcomeScreen";
 import { useNavigation } from "@react-navigation/native";
 
-const HomePageScreen = () => {
+const SearchNomalScreen = () => {
   const [index, setIndex] = useState(0);
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation();
@@ -75,86 +75,9 @@ const HomePageScreen = () => {
       price: 250,
     },
   ];
-  const images = [
-    {
-      id: 1,
-      source: {
-        uri: "https://vtv1.mediacdn.vn/Uploaded/lanchi/2013_09_19/10-hinh-anh-dac-trung-cua-ha-noi-0.jpg",
-      },
-      title: "Hà Nội",
-    },
-    {
-      id: 2,
-      source: {
-        uri: "https://img.daibieunhandan.vn/resize/800x800/Files/Images/2023/07/26/visithue_phao-hoa-2-1690342560540.jpg",
-      },
-      title: "Huế",
-    },
-    {
-      id: 3,
-      source: {
-        uri: "https://toquoc.mediacdn.vn/2020/4/26/da-nang-15878865291212013802504.jpg",
-      },
-      title: "Đà Nẵng",
-    },
-    {
-      id: 4,
-      source: {
-        uri: "https://quangxuong.thanhhoa.gov.vn/portal/Photos/2023-09/89dcdbb35982c49dba-ria-vung-tau.jpg",
-      },
-      title: "Vũng Tàu",
-    },
-    {
-      id: 5,
-      source: {
-        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvrUO6IokoYxBQqWuQKnt_o1TRgjVcPkI6iTuXTky6yw&s",
-      },
-      title: "Cần Thơ",
-    },
-    {
-      id: 6,
-      source: {
-        uri: "https://media.vneconomy.vn/images/upload/2023/02/13/e6927be0-d152-44dc-8a94-71cce7ddfed8.jpeg",
-      },
-      title: "Quảng Ninh",
-    },
-    // Thêm các mục ảnh khác vào đây
-  ];
   const handleDetail = () => {
-    // Điều hướng sang trang đăng ký
     navigation.navigate("HotelDetail");
   };
-  const renderImageItem = ({ item }) => (
-    <View style={styles.imageContainer}>
-      <Image source={item.source} style={styles.image} />
-      <Text style={{ margin: 5, fontWeight: "bold" }}>{item.title}</Text>
-    </View>
-  );
-  const renderBestHotels = ({ item }) => (
-    <View style={styles.hotelItem}>
-      <Image source={item.source} style={styles.hotelImage} />
-      <View style={styles.hotelRating}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <TouchableOpacity key={star}>
-            <Icon
-              name={star <= item.rating ? "star" : "star-o"}
-              size={18}
-              color={star <= item.rating ? "gold" : "gray"}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-      <Text style={styles.hotelName}>{item.name}</Text>
-      <View style={styles.locationContainer}>
-        <Icon name="map-marker" size={16} color="gray" />
-        <Text style={styles.locationText}>{item.location}</Text>
-      </View>
-      <Text style={styles.hotelPrice}>${item.price}/night</Text>
-      <TouchableOpacity onPress={handleDetail} style={styles.bookButton}>
-        <Text style={styles.bookButtonText}>Detail</Text>
-      </TouchableOpacity>
-    </View>
-  );
   const renderHotels = ({ item }) => (
     <View key={item.id} style={styles.hotelItem1}>
       <Image source={item.source} style={styles.hotelImage1} />
@@ -189,18 +112,24 @@ const HomePageScreen = () => {
   const handleSearch = () => {
     navigation.navigate('SearchNomal');
   };
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+
+  const handleToggleAdvancedSearch = () => {
+    setShowAdvancedSearch(!showAdvancedSearch);
+  };
   const handleCompare = () => {
     navigation.navigate('Compare');
   };
 
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Text style={styles.title}>Welcome, Quang Dũng!</Text>
+        <Text style={styles.title}>Tìm kiếm</Text>
         <View style={styles.searchContainer1}>
           <TextInput
             style={styles.searchInput}
-            placeholder="Tìm kiếm"
+            placeholder="Nhập từ khóa tìm kiếm"
           //   value={searchText}
           //   onChangeText={setSearchText}
           //   onSubmitEditing={handleSearch}
@@ -208,38 +137,50 @@ const HomePageScreen = () => {
           <TouchableHighlight
             style={styles.searchButton}
             underlayColor="#007bff"
-            onPress={handleSearch}
+          // onPress={handleSearch}
           >
             <Icon name="search" size={14} color="white" />
           </TouchableHighlight>
         </View>
+
+        {showAdvancedSearch && (
+          <View style={styles.advancedSearchContainer}>
+            <View style={styles.searchContainer1}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Địa điểm"
+              //   value={searchText}
+              //   onChangeText={setSearchText}
+              //   onSubmitEditing={handleSearch}
+              />
+            </View>
+            <View style={styles.searchContainer1}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Giá"
+              //   value={searchText}
+              //   onChangeText={setSearchText}
+              //   onSubmitEditing={handleSearch}
+              />
+
+            </View>
+          </View>
+        )}
+        <TouchableHighlight
+          style={styles.toggleButton}
+          underlayColor="#007bff"
+          onPress={handleToggleAdvancedSearch}
+        >
+          <View style={styles.toggleBtn}>
+            <Text style={styles.toggleText}>
+              {showAdvancedSearch ? "Ẩn" : "Tìm kiếm nâng cao"}
+            </Text>
+          </View>
+        </TouchableHighlight>
       </View>
       <ScrollView style={{ flex: 1, width: "100%" }}>
-        <FlatList
-          data={images}
-          renderItem={renderImageItem}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
         <View style={styles.containerHeaderBestHotels}>
-          <Text style={styles.headerBestHotelsText}>Best Hotels</Text>
-          <Text
-            onPress={handleSeeAllBestHotels}
-            style={styles.linkBestHotelsText}
-          >
-            See All
-          </Text>
-        </View>
-        <FlatList
-          data={bestHotels}
-          renderItem={renderBestHotels}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-        <View style={styles.containerHeaderBestHotels}>
-          <Text style={styles.headerBestHotelsText}>Nearby your location</Text>
+          <Text style={styles.headerBestHotelsText}>5 Kết quả tìm kiếm !</Text>
           <Text
             onPress={handleSeeAllBestHotels}
             style={styles.linkBestHotelsText}
@@ -281,7 +222,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     width: "100%",
-    height: 170,
+    // height: 170,
     justifyContent: "center",
     alignItems: "center",
     borderBottomLeftRadius: 20,
@@ -289,6 +230,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#1e90ff",
     borderColor: "#1e90ff",
     borderWidth: 2,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 20,
@@ -311,6 +254,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     paddingHorizontal: 12,
     paddingVertical: 8,
+    marginBottom: 10,
   },
   searchInput: {
     flex: 1,
@@ -329,18 +273,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  imageContainer: {
-    marginRight: 20,
-    marginLeft: 20,
-    marginTop: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-  },
   containerHeaderBestHotels: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -357,76 +289,11 @@ const styles = StyleSheet.create({
     color: "blue",
     textDecorationLine: "none",
   },
-  hotelItem: {
-    flexDirection: "column",
-    width: 300,
-    height: 300,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginBottom: 16,
-    backgroundColor: "white",
-    borderRadius: 8,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    margin: 10,
-  },
-  hotelImage: {
-    width: "100%",
-    height: "50%",
-    borderRadius: 8,
-    marginBottom: 16,
-    alignSelf: "center",
-  },
-  hotelName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  locationContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  locationText: {
-    marginLeft: 4,
-    fontSize: 14,
-    color: "gray",
-  },
-  hotelRating: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
   starIcon: {
     width: 16,
     height: 16,
     marginRight: 4,
     resizeMode: "contain",
-  },
-  hotelPrice: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#007bff",
-    marginBottom: 8,
-  },
-  bookButton: {
-    backgroundColor: "#007bff",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-  },
-  bookButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   hotelItem1: {
     flexDirection: "row",
@@ -512,6 +379,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
+  toggleBtn:{
+    padding: 5,
+    paddingLeft:8,
+    paddingRight:8,
+    backgroundColor: "white",
+    borderRadius: 20,
+  },
+  toggleText:{
+    fontWeight: "600"
+  }
 });
 
-export default HomePageScreen;
+export default SearchNomalScreen;
+

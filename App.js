@@ -9,6 +9,8 @@ import RegisterScreen from './screens/RegisterScreen'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomePageScreen from './screens/HomePageScreen';
 import HotelDetailScreen from './screens/HotelDetailScreen';
+import SearchNomalScreen from './screens/SearchNomalScreen';
+import CompareScreen from './screens/CompareScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -22,6 +24,8 @@ export default function App() {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="HomePage" component={HomePageScreen} />
         <Stack.Screen name="HotelDetail" component={HotelDetailScreen} />
+        <Stack.Screen name="SearchNomal" component={SearchNomalScreen} />
+        <Stack.Screen name="Compare" component={CompareScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
