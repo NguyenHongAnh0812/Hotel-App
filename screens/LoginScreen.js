@@ -20,16 +20,45 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     // Kiểm tra tên người dùng và mật khẩu ở đây
-    if (username === "admin" && password === "password") {
-      Alert.alert("Đăng nhập thành công");
-      
-    } else {
-      Alert.alert("Đăng nhập thất bại");
+    if (!username || !password) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin");
+      return;
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "HomePage" }],
-    });
+
+    // Gửi thông tin đăng nhập đến API để xác minh
+    fetch("http://192.168.1.89:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Lưu thông tin đăng nhập vào local storage hoặc Redux store
+          // Để sử dụng trong toàn bộ ứng dụng
+
+          // Reset các trường nhập liệu
+          setUsername("");
+          setPassword("");
+
+          // Hiển thị thông báo thành công
+          Alert.alert("Thành công", "Đăng nhập thành công");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "HomePage" }],
+          });
+        } else {
+          // Hiển thị thông báo lỗi đăng nhập
+          Alert.alert("Lỗi", "Email hoặc mật khẩu không chính xác");
+        }
+      })
+      .catch((error) => {
+        // Hiển thị thông báo lỗi khi gửi request
+        Alert.alert("Lỗi", "Đã xảy ra lỗi khi gửi dữ liệu: " + error.message);
+      });
+    
   };
 
   const handleCreateAccount = () => {
@@ -37,7 +66,7 @@ const LoginScreen = () => {
     navigation.navigate("Register");
   };
 
-  const handleForgotPassword= () => {
+  const handleForgotPassword = () => {
     // Điều hướng sang trang đăng ký
     navigation.navigate("ForgotPassword");
   };
@@ -60,7 +89,9 @@ const LoginScreen = () => {
         resizeMode="contain"
       />
       <Text style={styles.title}>Let's get you Login!</Text>
-      <Text style={{fontSize:15, color:'#a9a9a9', marginBottom:20}}>Enter your information below</Text>
+      <Text style={{ fontSize: 15, color: "#a9a9a9", marginBottom: 20 }}>
+        Enter your information below
+      </Text>
       <View style={styles.socialButtonsContainer}>
         <TouchableOpacity
           style={styles.socialButton}
@@ -71,9 +102,9 @@ const LoginScreen = () => {
               name="google"
               size={20}
               color="#4285F4"
-              style={{ justifyContent:'center',alignItems:'center' }}
-            />
-            {" "}  Google
+              style={{ justifyContent: "center", alignItems: "center" }}
+            />{" "}
+            Google
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -85,13 +116,15 @@ const LoginScreen = () => {
               name="facebook"
               size={20}
               color="#1877F2"
-              style={{ justifyContent:'center',alignItems:'center' }}
-            /> 
-            {" "}  Facebook
+              style={{ justifyContent: "center", alignItems: "center" }}
+            />{" "}
+            Facebook
           </Text>
         </TouchableOpacity>
       </View>
-      <Text style={{fontSize:15,textAlign:'center',alignSelf:'center'}}>Or login with</Text>
+      <Text style={{ fontSize: 15, textAlign: "center", alignSelf: "center" }}>
+        Or login with
+      </Text>
       <TextInput
         style={styles.input}
         placeholder="Enter email"
@@ -106,12 +139,12 @@ const LoginScreen = () => {
         value={password}
       />
       <Text onPress={handleForgotPassword} style={styles.forgotpasswordText}>
-          Forgot password?
-        </Text>
+        Forgot password?
+      </Text>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <Text style={styles.createAccountText} >
+      <Text style={styles.createAccountText}>
         Don't have an account?{" "}
         <Text onPress={handleCreateAccount} style={styles.createAccountLink}>
           Register Now
@@ -169,9 +202,9 @@ const styles = StyleSheet.create({
     color: "#007bff",
     fontSize: 16,
     textDecorationLine: "none",
-    marginTop:10,
-    textAlign:'center',
-    alignSelf: 'flex-end',
+    marginTop: 10,
+    textAlign: "center",
+    alignSelf: "flex-end",
   },
   createAccountText: {
     marginTop: 10,
@@ -179,7 +212,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 16,
     textDecorationLine: "none",
-    marginTop:30,
+    marginTop: 30,
     textAlign: "center",
     alignSelf: "center",
   },
