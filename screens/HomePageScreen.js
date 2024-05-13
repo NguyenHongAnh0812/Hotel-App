@@ -35,53 +35,6 @@ const HomePageScreen = () => {
         console.error('Lỗi khi lấy dữ liệu:', error);
       });
   }, []);
-  // const bestHotels = [
-  //   {
-  //     id: 1,
-  //     source: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
-  //     name: "Luxyry Hotel",
-  //     rating: 3,
-  //     location: "Đà Nẵng, Việt Nam",
-  //     price: 100,
-  //     review : "3.0 (115 Review)"
-  //   },
-  //   {
-  //     id: 2,
-  //     source: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi9eEaU609SDeE9dkm0aCgu9yp7DvhB1qfn0Cyr3aK8A&s",
-  //     name: "Pro Hotel",
-  //     location: "Vũng Tàu, Việt Nam",
-  //     rating: 4,
-  //     price: 120,
-  //     review : "4.0 (96 Review)"
-  //   },
-  //   {
-  //     id: 3,
-  //     source:  "https://thanhnien.mediacdn.vn/Uploaded/ttt/images/Content/tan-huong/xach-vali-di/2016_12_w2/rex_hotel/Exterior_Rex_9.jpg",
-  //     name: "Armani Hotel",
-  //     location: "Quất Lâm, Giao Thuỷ, Nam Định, Việt Nam",
-  //     rating: 5,
-  //     price: 150,
-  //     review : "5.0 (60 Review)"
-  //   },
-  //   {
-  //     id: 4,
-  //     source: "https://fantasea.vn/wp-content/uploads/2017/10/khach-san-pullman-ha-noi.jpg",
-  //     name: "Kasbah Du Toubkal Hotel",
-  //     location: "Phố Cổ, Hà Nội, Việt Nam",
-  //     rating: 3,
-  //     price: 200,
-  //     review : "3.0 (120 Review)"
-  //   },
-  //   {
-  //     id: 5,
-  //     source: "https://motortrip.vn/wp-content/uploads/2022/03/khach-san-15.jpg",
-  //     name: "Orson Hotel",
-  //     location: "TP.Hồ Chí Minh, Việt Nam",
-  //     rating: 4,
-  //     price: 250,
-  //     review : "4.0 (200 Review)"
-  //   },
-  // ];
   const images = [
     {
       id: 1,
@@ -127,11 +80,6 @@ const HomePageScreen = () => {
     },
     // Thêm các mục ảnh khác vào đây
   ];
-  const handleDetail = ({hotelId}) => {
-    // Điều hướng sang trang đăng ký
-    console.log(hotelId)
-    
-  };
   const renderImageItem = ({ item }) => (
     <View style={styles.imageContainer}>
       <Image source={item.source} style={styles.image} />
@@ -189,7 +137,7 @@ const HomePageScreen = () => {
         </View>
         <Text style={styles.hotelPrice1}>${item.price}/night</Text>
       </View>
-      <TouchableOpacity onPress={handleDetail} style={styles.bookButton1}>
+      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id})} style={styles.bookButton1}>
         <Text  style={styles.bookButtonText1}>Detail</Text>
       </TouchableOpacity>
     </View>

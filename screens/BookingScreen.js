@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { CheckBox } from "react-native-elements";
 
@@ -20,7 +20,8 @@ const BookingScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nameVisa, setNameVisa] = useState("Visa card not added yet");
-  const [number, setNumber] = useState(6);
+  const [number, setNumber] = useState(2);
+  const [total, setTotal] = useState(0);
   const s = ">";
   const [isChecked, setIsChecked] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -29,10 +30,23 @@ const BookingScreen = () => {
   const [expiryDate, setExpiryDate] = useState("");
   const [isBookingSuccessVisible, setIsBookingSuccessVisible] = useState(false);
   const navigation = useNavigation();
+  const route = useRoute();
+  const { hotelId } = route.params;
+  const [item, setItem] = useState({});
+  useEffect(() => {
+    fetch(`http://192.168.1.89:3000/hotels/${hotelId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setItem(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
+  }, []);
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
-
+  // setTotal(item.price)
   const handleAddToCart = () => {
     setNameVisa(cardName);
     setIsModalVisible(false);
@@ -43,12 +57,14 @@ const BookingScreen = () => {
   };
 
   const increaseNumber = () => {
-    setNumber(number + 1);
+    const k = number + 1;
+    if (k > 5) Alert.alert("Quá số lượng người ở mỗi phòng")
+    else setNumber(k);
   };
 
   const decreaseNumber = () => {
     const k = number - 1;
-    if (k < 0) setNumber(0);
+    if (k == 0) Alert.alert("Phải có ít nhất 1 người")
     else setNumber(k);
   };
   const handleEditDate = () => {
@@ -69,20 +85,11 @@ const BookingScreen = () => {
   const handleBookingSuccess = () => {
     setIsBookingSuccessVisible(false);
   };
-  const item = {
-    id: 1,
-    source: {
-      uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
-    },
-    name: "Luxyry Hotel",
-    rating: 3,
-    location: "Đà Nẵng, Việt Nam",
-    price: 100,
-  };
+
   return (
     <View style={styles.container}>
       <View key={item.id} style={styles.hotelItem1}>
-        <Image source={item.source} style={styles.hotelImage1} />
+        <Image source={{ uri: item.source }} style={styles.hotelImage1} />
         <View style={styles.hotelTitle}>
           <View style={styles.hotelRating1}>
             {[1, 2, 3, 4, 5].map((star) => (
@@ -172,7 +179,7 @@ const BookingScreen = () => {
               marginTop: 10,
             }}
           >
-            Pay in full
+            Pay in Visa
           </Text>
           <View
             style={{
@@ -196,7 +203,7 @@ const BookingScreen = () => {
               marginTop: 10,
             }}
           >
-            Pay pat now, part later
+            Pay after check-in
           </Text>
           <View
             style={{
@@ -206,121 +213,130 @@ const BookingScreen = () => {
             }}
           >
             <Text style={{ fontSize: 15, color: "#454545" }}>
-              Pay part now and you're all set.
+              Pay after check-in
             </Text>
             <CheckBox checked={!isChecked} onPress={toggleCheckbox} />
           </View>
         </View>
-        <View style={styles.containerHeader}>
-          <Text style={styles.headerText}>Pay with</Text>
-        </View>
-        <View style={{ marginLeft: 36 }}>
-          <Text
-            style={{
-              fontSize: 15,
-              color: "#000",
-              fontWeight: "bold",
-              marginTop: 10,
-            }}
-          >
-            Payment with Visa
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ fontSize: 15, color: "#454545" }}>{nameVisa}</Text>
-            <TouchableOpacity
-              onPress={toggleModal}
+        {isChecked ? (
+          <View style={styles.containerHeader}>
+            <Text style={styles.headerText}>Pay with</Text>
+          </View>
+        ) : null}
+        {isChecked ? (
+          <View style={{ marginLeft: 36 }}>
+            <Text
               style={{
-                backgroundColor: "#fff",
-                paddingVertical: 5,
-                paddingHorizontal: 10,
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: "#000",
-                marginRight: 10,
+                fontSize: 15,
+                color: "#000",
+                fontWeight: "bold",
+                marginTop: 10,
               }}
             >
-              <Text style={{ color: "#000", fontWeight: "bold" }}>Add</Text>
-            </TouchableOpacity>
-            <Modal
-              visible={isModalVisible}
-              onRequestClose={toggleModal}
-              transparent
+              Payment with Visa
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>Add to Cart</Text>
-                  <TextInput
-                    placeholder="Card Number"
-                    value={cardNumber}
-                    onChangeText={setCardNumber}
-                    style={styles.input}
-                  />
-                  <TextInput
-                    placeholder="Card Name"
-                    value={cardName}
-                    onChangeText={setCardName}
-                    style={styles.input}
-                  />
-                  <TextInput
-                    placeholder="Expiry Date"
-                    value={expiryDate}
-                    onChangeText={setExpiryDate}
-                    style={styles.input}
-                  />
-                  <TouchableOpacity
-                    onPress={handleAddToCart}
-                    style={styles.addButton}
-                  >
-                    <Text style={styles.addButtonText}>Add to Cart</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={toggleModal}
-                    style={styles.cancelButton}
-                  >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                  </TouchableOpacity>
+              <Text style={{ fontSize: 15, color: "#454545" }}>{nameVisa}</Text>
+              <TouchableOpacity
+                onPress={toggleModal}
+                style={{
+                  backgroundColor: "#fff",
+                  paddingVertical: 5,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  borderWidth: 1,
+                  borderColor: "#000",
+                  marginRight: 10,
+                }}
+              >
+                <Text style={{ color: "#000", fontWeight: "bold" }}>Add</Text>
+              </TouchableOpacity>
+              <Modal
+                visible={isModalVisible}
+                onRequestClose={toggleModal}
+                transparent
+              >
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Add to Cart</Text>
+                    <TextInput
+                      placeholder="Card Number"
+                      value={cardNumber}
+                      onChangeText={setCardNumber}
+                      style={styles.input}
+                    />
+                    <TextInput
+                      placeholder="Card Name"
+                      value={cardName}
+                      onChangeText={setCardName}
+                      style={styles.input}
+                    />
+                    <TextInput
+                      placeholder="Expiry Date"
+                      value={expiryDate}
+                      onChangeText={setExpiryDate}
+                      style={styles.input}
+                    />
+                    <TouchableOpacity
+                      onPress={handleAddToCart}
+                      style={styles.addButton}
+                    >
+                      <Text style={styles.addButtonText}>Add to Cart</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={toggleModal}
+                      style={styles.cancelButton}
+                    >
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </Modal>
+              </Modal>
+            </View>
           </View>
-        </View>
+        ) : null}
         <View style={styles.containerHeader}>
           <Text style={styles.headerText}>Price Details</Text>
         </View>
         <View style={styles.infoDescription}>
           <View style={styles.infoDescriptionPrice}>
-            <Text style={styles.infoDescriptionTextPrice}>$100</Text>
-            <Text style={styles.infoDescriptionTextPrice}>$100</Text>
-          </View>
-          <View style={styles.infoDescriptionPrice}>
-            <Text style={styles.infoDescriptionTextPrice}>Discount</Text>
-            <Text style={styles.infoDescriptionTextPrice}>- $10</Text>
+            <Text style={styles.infoDescriptionTextPrice}>Price</Text>
+            <Text style={styles.infoDescriptionTextPrice}>$ {item.price}</Text>
           </View>
           <View style={styles.infoDescriptionPrice}>
             <Text style={styles.infoDescriptionTextPrice}>
-              Bonus ( {s} 5 guest )
+              Bonus ( {s} 2 guest )
             </Text>
-            <Text style={styles.infoDescriptionTextPrice}> + $50</Text>
+            <Text style={styles.infoDescriptionTextPrice}>$ {Number(number-2)*20}</Text>
           </View>
         </View>
         <View style={styles.infoDescriptionTotal}>
           <Text style={styles.infoDescriptionTextPrice}>Total</Text>
-          <Text style={styles.infoDescriptionTextPrice}>$140</Text>
+          <Text style={styles.infoDescriptionTextPrice}>$ {Number(item.price)+Number(number-2)*20}</Text>
         </View>
       </ScrollView>
       <View style={styles.tabBottom}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.price}>Grand Total</Text>
-          <Text style={styles.price}>$140</Text>
+          <Text style={styles.price}>$ {Number(item.price)+Number(number-2)*20}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => setIsBookingSuccessVisible(!isBookingSuccessVisible)}
+          onPress={() => {
+            if (
+              isChecked == false ||
+              (isChecked == true && nameVisa != "Visa card not added yet")
+            )
+              setIsBookingSuccessVisible(!isBookingSuccessVisible);
+            else if (isChecked == true && nameVisa == "Visa card not added yet")
+              Alert.alert("Vui lòng add thẻ visa");
+            else setIsBookingSuccessVisible(!isBookingSuccessVisible);
+          }}
           style={styles.bookButton}
         >
           <Text style={styles.bookButtonText}>Pay Now</Text>
@@ -337,13 +353,17 @@ const BookingScreen = () => {
               </View>
               <Text style={styles.bookingSuccessText}>Payment Received</Text>
               <Text style={styles.bookingSuccessText}>Successfully</Text>
-              <Text >Congratulations</Text>
-              <Text style={{marginBottom:30,}} >Your booking has been confirmed</Text>
+              <Text>Congratulations</Text>
+              <Text style={{ marginBottom: 30 }}>
+                Your booking has been confirmed
+              </Text>
               <TouchableOpacity
                 onPress={handleBookingSuccess}
                 style={styles.okButton}
               >
-                <Text onPress={handleBackToHome} style={styles.okButtonText}>OK</Text>
+                <Text onPress={handleBackToHome} style={styles.okButtonText}>
+                  OK
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -647,10 +667,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#00cc00',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:20,
-  }
+    backgroundColor: "#00cc00",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
 });
 export default BookingScreen;

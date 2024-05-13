@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -17,11 +17,21 @@ const HotelDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute()
   const {hotelId} = route.params
-  console.log(hotelId)
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [hotel, setHotel] = useState({});
+  useEffect(() => {
+    fetch(`http://192.168.1.89:3000/hotels/${hotelId}`)
+      .then(response => response.json())
+      .then(data => {
+        setHotel(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch(error => {
+        console.error('Lỗi khi lấy dữ liệu:', error);
+      });
+  }, []);
   const handleSelectDate = () => {
-    navigation.navigate("Booking");
+    navigation.navigate("Booking" , {hotelId : hotelId});
     // setShowDatePicker(true);
   };
   const showAlertAndWait = () => {
@@ -38,7 +48,6 @@ const HotelDetailScreen = () => {
       await showAlertAndWait();
       navigation.navigate("Booking");
     }
-    // setShowDatePicker(false);
   };
   const images = [
     {
@@ -95,7 +104,7 @@ const HotelDetailScreen = () => {
     <View style={styles.container}>
       <Image
         source={{
-          uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
+          uri: hotel.source,
         }}
         style={styles.image}
       />
@@ -104,25 +113,23 @@ const HotelDetailScreen = () => {
           {[1, 2, 3, 4, 5].map((star) => (
             <TouchableOpacity key={star}>
               <Icon
-                name={star <= 4 ? "star" : "star-o"}
+                name={star <= hotel.rating ? "star" : "star-o"}
                 size={18}
-                color={star <= 4 ? "gold" : "gray"}
+                color={star <= hotel.rating ? "gold" : "gray"}
               />
             </TouchableOpacity>
           ))}
-          <Text style={{ marginLeft: 10 }}>4.0 (120 Review)</Text>
+          <Text style={{ marginLeft: 10 }}> {hotel.review} </Text>
         </View>
-        <Text style={styles.title}>Luxyry Hotel</Text>
+        <Text style={styles.title}>{hotel.name}</Text>
         <View style={styles.locationContainer}>
           <Icon name="map-marker" size={16} color="gray" />
-          <Text style={styles.locationText}>Đà Nẵng, Việt Nam</Text>
+          <Text style={styles.locationText}>{hotel.location}</Text>
         </View>
         <View style={styles.infoDescription}>
           <Text style={styles.infoDescriptionLabel}>Overview</Text>
           <Text style={styles.infoDescriptionText}>
-            Welcome to Sunset Beach Hotel, where luxury meets tranquility.
-            Situated along the pristine shoreline, our beachfront hotel offers
-            breathtaking views of the golden sunsets and gentle waves.
+            {hotel.overview}
           </Text>
         </View>
         <View style={styles.containerHeaderPhoto}>
@@ -138,18 +145,18 @@ const HotelDetailScreen = () => {
         />
         <View style={styles.containerHeaderPhoto}>
           <Text style={styles.headerPhotoText1}>
-            Room in boutique hotel hosted by AnhRon
+            Room in boutique hotel hosted by {hotel.manage}
           </Text>
           <Image
             source={{
-              uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
+              uri: hotel.source,
             }}
             style={{ width: 70, height: 70, borderRadius: 50 }}
           />
         </View>
         <View style={styles.infoDescription}>
           <Text style={{ marginLeft: 15, fontSize: 15, fontWeight: "bold" }}>
-            2 guests - 1 bedroom - 1 bed - 1 badthroom
+          {hotel.info}
           </Text>
         </View>
         <View style={styles.infoDescription}>
@@ -212,7 +219,7 @@ const HotelDetailScreen = () => {
         </View>
       </ScrollView>
       <View style={styles.tabBottom}>
-        <Text style={styles.price}>$100/Night</Text>
+        <Text style={styles.price}>${hotel.price}/Night</Text>
         <TouchableOpacity style={styles.bookButton} onPress={handleSelectDate}>
           <Text style={styles.bookButtonText}>Booking</Text>
         </TouchableOpacity>

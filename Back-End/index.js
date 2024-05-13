@@ -68,6 +68,23 @@ app.get('/hotels', function(req, res) {
     res.json(rows);
   });
 });
+app.get('/hotels/:id', function (req, res) {
+  const hotelId = req.params.id;
+  const query = 'SELECT * FROM hotels WHERE id = ?';
+  connection.query(query, [hotelId], function (err, results) {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Lỗi truy vấn cơ sở dữ liệu' });
+      return;
+    }
+  const hotel = results[0];
+  res.json(hotel);
+  });
+});
+
+
+
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
