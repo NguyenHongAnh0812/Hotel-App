@@ -17,6 +17,7 @@ const HotelDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute()
   const {hotelId} = route.params
+  const {userId} = route.params
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hotel, setHotel] = useState({});
@@ -31,7 +32,7 @@ const HotelDetailScreen = () => {
       });
   }, []);
   const handleSelectDate = () => {
-    navigation.navigate("Booking" , {hotelId : hotelId});
+    navigation.navigate("Booking" , {hotelId : hotelId, userId : userId});
     // setShowDatePicker(true);
   };
   const showAlertAndWait = () => {

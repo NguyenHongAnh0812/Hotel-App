@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -9,156 +9,90 @@ import {
   ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 const ListBookingScreen = () => {
     const navigation=useNavigation();
-    const bestHotels = [
-        {
-          id: 1,
-          source: {
-            uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
-          },
-          name: "Luxyry Hotel",
-          rating: 3,
-          location: "Đà Nẵng, Việt Nam",
-          price: 100,
-          review : "3.0 (115 Review)"
-        },
-        {
-          id: 2,
-          source: {
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi9eEaU609SDeE9dkm0aCgu9yp7DvhB1qfn0Cyr3aK8A&s",
-          },
-          name: "Pro Hotel",
-          location: "Vũng Tàu, Việt Nam",
-          rating: 4,
-          price: 120,
-          review : "4.0 (96 Review)"
-        },
-        {
-          id: 3,
-          source: {
-            uri: "https://thanhnien.mediacdn.vn/Uploaded/ttt/images/Content/tan-huong/xach-vali-di/2016_12_w2/rex_hotel/Exterior_Rex_9.jpg",
-          },
-          name: "Armani Hotel",
-          location: "Quất Lâm, Giao Thuỷ, Nam Định, Việt Nam",
-          rating: 5,
-          price: 150,
-          review : "5.0 (60 Review)"
-        },
-        {
-          id: 4,
-          source: {
-            uri: "https://fantasea.vn/wp-content/uploads/2017/10/khach-san-pullman-ha-noi.jpg",
-          },
-          name: "Kasbah Du Toubkal Hotel",
-          location: "Phố Cổ, Hà Nội, Việt Nam",
-          rating: 3,
-          price: 200,
-          review : "3.0 (120 Review)"
-        },
-        {
-          id: 5,
-          source: {
-            uri: "https://motortrip.vn/wp-content/uploads/2022/03/khach-san-15.jpg",
-          },
-          name: "Orson Hotel",
-          location: "TP.Hồ Chí Minh, Việt Nam",
-          rating: 4,
-          price: 250,
-          review : "4.0 (200 Review)"
-        },
-      ];
-  const bestHotels1 = [
-    {
-        id: 1,
-        source: {
-          uri: "https://fantasea.vn/wp-content/uploads/2017/10/khach-san-pullman-ha-noi.jpg",
-        },
-        name: "Kasbah Du Toubkal Hotel",
-        location: "Phố Cổ, Hà Nội, Việt Nam",
-        rating: 3,
-        price: 200,
-        review : "3.0 (120 Review)"
-      },
-      {
-        id: 2,
-        source: {
-          uri: "https://motortrip.vn/wp-content/uploads/2022/03/khach-san-15.jpg",
-        },
-        name: "Orson Hotel",
-        location: "TP.Hồ Chí Minh, Việt Nam",
-        rating: 4,
-        price: 250,
-        review : "4.0 (200 Review)"
-      },
-  ];
+    const [bestHotels, setBestHotels] = useState([]);
+    const [bestHotels1, setBestHotels1] = useState([]);
+    useEffect(() => {
+      fetch('http://192.168.1.89:3000/listbooking')
+        .then(response => response.json())
+        .then(data => {
+          setBestHotels(data);
+          setBestHotels1(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+        })
+        .catch(error => {
+          console.error('Lỗi khi lấy dữ liệu:', error);
+        });
+    }, []);
   const [chose, setChose] = useState(true);
+  const route = useRoute()
+  const {userId} = route.params
   const handlePress = () => {
     setChose(!chose); // Toggle the value of `chose` when the button is pressed
   };
   const handleBack = () => {
-    navigation.navigate('HomePage');
+    navigation.navigate('HomePage' , {userId: userId});
   }
   const renderHotels = ({ item }) => (
-    <View key={item.id} style={styles.hotelItem1}>
-      <Image source={item.source} style={styles.hotelImage1} />
+    <View key={item.hotel.id} style={styles.hotelItem1}>
+      <Image source={{uri: item.hotel.source}} style={styles.hotelImage1} />
       <View style={styles.hotelTitle}>
         <View style={styles.hotelRating1}>
           {[1, 2, 3, 4, 5].map((star) => (
             <TouchableOpacity key={star}>
               <Icon
-                name={star <= item.rating ? "star" : "star-o"}
+                name={star <= item.hotel.rating ? "star" : "star-o"}
                 size={18}
-                color={star <= item.rating ? "gold" : "gray"}
+                color={star <= item.hotel.rating ? "gold" : "gray"}
               />
             </TouchableOpacity>
           ))}
-          <Text style={{ marginLeft: 10 }}>{item.review}</Text>
+          <Text style={{ marginLeft: 10 }}>{item.hotel.review}</Text>
         </View>
-        <Text style={styles.hotelName1}>{item.name}</Text>
+        <Text style={styles.hotelName1}>{item.hotel.name}</Text>
         <View style={styles.locationContainer1}>
           <Icon name="map-marker" size={16} color="gray" />
-          <Text style={styles.locationText1}>{item.location}</Text>
+          <Text style={styles.locationText1}>{item.hotel.location}</Text>
         </View>
-        <Text style={styles.hotelPrice1}>${item.price}/night</Text>
+        <Text style={styles.hotelPrice1}>${item.hotel.price}/night</Text>
       </View>
       <TouchableOpacity style={styles.bookButton1}>
         <Text style={styles.bookButtonText1}>View Detail</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bookButton2}>
-        <Text style={styles.bookButtonText2}>Cancel</Text>
+        <Text style={styles.bookButtonText2}>Success</Text>
       </TouchableOpacity>
     </View>
   );
   const renderHotels1 = ({ item }) => (
-    <View key={item.id} style={styles.hotelItem1}>
-      <Image source={item.source} style={styles.hotelImage1} />
+    <View key={item.hotel.id} style={styles.hotelItem1}>
+      <Image source={{uri: item.hotel.source}} style={styles.hotelImage1} />
       <View style={styles.hotelTitle}>
         <View style={styles.hotelRating1}>
           {[1, 2, 3, 4, 5].map((star) => (
             <TouchableOpacity key={star}>
               <Icon
-                name={star <= item.rating ? "star" : "star-o"}
+                name={star <= item.hotel.rating ? "star" : "star-o"}
                 size={18}
-                color={star <= item.rating ? "gold" : "gray"}
+                color={star <= item.hotel.rating ? "gold" : "gray"}
               />
             </TouchableOpacity>
           ))}
-          <Text style={{ marginLeft: 10 }}>{item.review}</Text>
+          <Text style={{ marginLeft: 10 }}>{item.hotel.review}</Text>
         </View>
-        <Text style={styles.hotelName1}>{item.name}</Text>
+        <Text style={styles.hotelName1}>{item.hotel.name}</Text>
         <View style={styles.locationContainer1}>
           <Icon name="map-marker" size={16} color="gray" />
-          <Text style={styles.locationText1}>{item.location}</Text>
+          <Text style={styles.locationText1}>{item.hotel.location}</Text>
         </View>
-        <Text style={styles.hotelPrice1}>${item.price}/night</Text>
+        <Text style={styles.hotelPrice1}>${item.hotel.price}/night</Text>
       </View>
       <TouchableOpacity style={styles.bookButton1}>
         <Text style={styles.bookButtonText1}>Book Again</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bookButton2}>
-        <Text style={styles.bookButtonText2}>Write a Review</Text>
+        <Text style={styles.bookButtonText2}>Review</Text>
       </TouchableOpacity>
     </View>
   );
@@ -217,7 +151,7 @@ const ListBookingScreen = () => {
 
       <ScrollView>
         {
-            chose ? bestHotels.map((item) => renderHotels({ item, key: item.id })) : bestHotels1.map((item) => renderHotels1({ item, key: item.id }))
+            chose ? bestHotels.map((item) => renderHotels({ item , key: item.hotel.id })) : bestHotels1.map((item) => renderHotels1({ item, key: item.hotel.id }))
         }
         
       </ScrollView>

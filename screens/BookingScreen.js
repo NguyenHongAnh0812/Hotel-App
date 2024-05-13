@@ -30,8 +30,9 @@ const BookingScreen = () => {
   const [expiryDate, setExpiryDate] = useState("");
   const [isBookingSuccessVisible, setIsBookingSuccessVisible] = useState(false);
   const navigation = useNavigation();
-  const route = useRoute();
-  const { hotelId } = route.params;
+  const route = useRoute()
+  const {hotelId} = route.params
+  const {userId} = route.params
   const [item, setItem] = useState({});
   useEffect(() => {
     fetch(`http://192.168.1.89:3000/hotels/${hotelId}`)
@@ -46,6 +47,38 @@ const BookingScreen = () => {
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
+  const handlePayNow = () => {
+    fetch("http://192.168.1.89:3000/add-booking", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idUser: userId,
+        idHotel: hotelId,
+        date: selectedDate.toLocaleDateString(), // Thay đổi ngày tùy theo yêu cầu của bạn
+        guests: number, // Thay đổi số lượng khách tùy theo yêu cầu của bạn
+        total: Number(item.price) + Number(number - 2) * 20, // Thay đổi tổng số tiền tùy theo yêu cầu của bạn
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Xử lý dữ liệu phản hồi
+        console.log(data);
+      })
+      .catch((error) => {
+        // Xử lý lỗi
+        console.error(error);
+      });
+    if (
+      isChecked == false ||
+      (isChecked == true && nameVisa != "Visa card not added yet")
+    )
+      setIsBookingSuccessVisible(!isBookingSuccessVisible);
+    else if (isChecked == true && nameVisa == "Visa card not added yet")
+      Alert.alert("Vui lòng add thẻ visa");
+    else setIsBookingSuccessVisible(!isBookingSuccessVisible);
+  }
   // setTotal(item.price)
   const handleAddToCart = () => {
     setNameVisa(cardName);
@@ -58,13 +91,13 @@ const BookingScreen = () => {
 
   const increaseNumber = () => {
     const k = number + 1;
-    if (k > 5) Alert.alert("Quá số lượng người ở mỗi phòng")
+    if (k > 5) Alert.alert("Quá số lượng người ở mỗi phòng");
     else setNumber(k);
   };
 
   const decreaseNumber = () => {
     const k = number - 1;
-    if (k == 0) Alert.alert("Phải có ít nhất 1 người")
+    if (k == 0) Alert.alert("Phải có ít nhất 1 người");
     else setNumber(k);
   };
   const handleEditDate = () => {
@@ -80,10 +113,11 @@ const BookingScreen = () => {
     setIsChecked(!isChecked);
   };
   const handleBackToHome = () => {
-    navigation.navigate("HomePage");
+    
   };
   const handleBookingSuccess = () => {
     setIsBookingSuccessVisible(false);
+    navigation.navigate("HomePage" , {userId: userId});
   };
 
   return (
@@ -313,30 +347,27 @@ const BookingScreen = () => {
             <Text style={styles.infoDescriptionTextPrice}>
               Bonus ( {s} 2 guest )
             </Text>
-            <Text style={styles.infoDescriptionTextPrice}>$ {Number(number-2)*20}</Text>
+            <Text style={styles.infoDescriptionTextPrice}>
+              $ {Number(number - 2) * 20}
+            </Text>
           </View>
         </View>
         <View style={styles.infoDescriptionTotal}>
           <Text style={styles.infoDescriptionTextPrice}>Total</Text>
-          <Text style={styles.infoDescriptionTextPrice}>$ {Number(item.price)+Number(number-2)*20}</Text>
+          <Text style={styles.infoDescriptionTextPrice}>
+            $ {Number(item.price) + Number(number - 2) * 20}
+          </Text>
         </View>
       </ScrollView>
       <View style={styles.tabBottom}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.price}>Grand Total</Text>
-          <Text style={styles.price}>$ {Number(item.price)+Number(number-2)*20}</Text>
+          <Text style={styles.price}>
+            $ {Number(item.price) + Number(number - 2) * 20}
+          </Text>
         </View>
         <TouchableOpacity
-          onPress={() => {
-            if (
-              isChecked == false ||
-              (isChecked == true && nameVisa != "Visa card not added yet")
-            )
-              setIsBookingSuccessVisible(!isBookingSuccessVisible);
-            else if (isChecked == true && nameVisa == "Visa card not added yet")
-              Alert.alert("Vui lòng add thẻ visa");
-            else setIsBookingSuccessVisible(!isBookingSuccessVisible);
-          }}
+          onPress={handlePayNow}
           style={styles.bookButton}
         >
           <Text style={styles.bookButtonText}>Pay Now</Text>
@@ -361,7 +392,7 @@ const BookingScreen = () => {
                 onPress={handleBookingSuccess}
                 style={styles.okButton}
               >
-                <Text onPress={handleBackToHome} style={styles.okButtonText}>
+                <Text style={styles.okButtonText}>
                   OK
                 </Text>
               </TouchableOpacity>

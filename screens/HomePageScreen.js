@@ -17,10 +17,13 @@ import { BottomNavigation } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./LoginScreen";
 import WelcomeScreen from "./WelcomeScreen";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 
 const HomePageScreen = () => {
   const [index, setIndex] = useState(0);
+  const route = useRoute()
+  const {userId} = route.params
+  console.log(userId)
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation();
   const [bestHotels, setBestHotels] = useState([]);
@@ -108,7 +111,7 @@ const HomePageScreen = () => {
         <Text style={styles.locationText}>{item.location}</Text>
       </View>
       <Text style={styles.hotelPrice}>${item.price}/night</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id})} style={styles.bookButton}>
+      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id , userId: userId})} style={styles.bookButton}>
         <Text  style={styles.bookButtonText}>Detail</Text>
       </TouchableOpacity>
     </View>
@@ -137,7 +140,7 @@ const HomePageScreen = () => {
         </View>
         <Text style={styles.hotelPrice1}>${item.price}/night</Text>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id})} style={styles.bookButton1}>
+      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id, userId: userId})} style={styles.bookButton1}>
         <Text  style={styles.bookButtonText1}>Detail</Text>
       </TouchableOpacity>
     </View>
@@ -210,7 +213,7 @@ const HomePageScreen = () => {
           <Icon name="home" size={20} color="black" />
           <Text>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => navigation.navigate("ListBooking")}>
+        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => navigation.navigate("ListBooking", {userId: userId})}>
           <Icon name="calendar" size={20} color="black" />
           <Text>Booking</Text>
         </TouchableOpacity>

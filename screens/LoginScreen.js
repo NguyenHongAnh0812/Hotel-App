@@ -47,7 +47,12 @@ const LoginScreen = () => {
           Alert.alert("Thành công", "Đăng nhập thành công");
           navigation.reset({
             index: 0,
-            routes: [{ name: "HomePage" }],
+            routes: [
+              {
+                name: "HomePage",
+                params: { userId: data.userId },
+              },
+            ],
           });
         } else {
           // Hiển thị thông báo lỗi đăng nhập
