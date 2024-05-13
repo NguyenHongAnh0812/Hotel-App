@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import React from "react";
 import {
   View,
@@ -23,63 +23,65 @@ const HomePageScreen = () => {
   const [index, setIndex] = useState(0);
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation();
-  const bestHotels = [
-    {
-      id: 1,
-      source: {
-        uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
-      },
-      name: "Luxyry Hotel",
-      rating: 3,
-      location: "Đà Nẵng, Việt Nam",
-      price: 100,
-      review : "3.0 (115 Review)"
-    },
-    {
-      id: 2,
-      source: {
-        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi9eEaU609SDeE9dkm0aCgu9yp7DvhB1qfn0Cyr3aK8A&s",
-      },
-      name: "Pro Hotel",
-      location: "Vũng Tàu, Việt Nam",
-      rating: 4,
-      price: 120,
-      review : "4.0 (96 Review)"
-    },
-    {
-      id: 3,
-      source: {
-        uri: "https://thanhnien.mediacdn.vn/Uploaded/ttt/images/Content/tan-huong/xach-vali-di/2016_12_w2/rex_hotel/Exterior_Rex_9.jpg",
-      },
-      name: "Armani Hotel",
-      location: "Quất Lâm, Giao Thuỷ, Nam Định, Việt Nam",
-      rating: 5,
-      price: 150,
-      review : "5.0 (60 Review)"
-    },
-    {
-      id: 4,
-      source: {
-        uri: "https://fantasea.vn/wp-content/uploads/2017/10/khach-san-pullman-ha-noi.jpg",
-      },
-      name: "Kasbah Du Toubkal Hotel",
-      location: "Phố Cổ, Hà Nội, Việt Nam",
-      rating: 3,
-      price: 200,
-      review : "3.0 (120 Review)"
-    },
-    {
-      id: 5,
-      source: {
-        uri: "https://motortrip.vn/wp-content/uploads/2022/03/khach-san-15.jpg",
-      },
-      name: "Orson Hotel",
-      location: "TP.Hồ Chí Minh, Việt Nam",
-      rating: 4,
-      price: 250,
-      review : "4.0 (200 Review)"
-    },
-  ];
+  const [bestHotels, setBestHotels] = useState([]);
+
+  useEffect(() => {
+    fetch('http://192.168.1.89:3000/hotels')
+      .then(response => response.json())
+      .then(data => {
+        setBestHotels(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch(error => {
+        console.error('Lỗi khi lấy dữ liệu:', error);
+      });
+  }, []);
+  // const bestHotels = [
+  //   {
+  //     id: 1,
+  //     source: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
+  //     name: "Luxyry Hotel",
+  //     rating: 3,
+  //     location: "Đà Nẵng, Việt Nam",
+  //     price: 100,
+  //     review : "3.0 (115 Review)"
+  //   },
+  //   {
+  //     id: 2,
+  //     source: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi9eEaU609SDeE9dkm0aCgu9yp7DvhB1qfn0Cyr3aK8A&s",
+  //     name: "Pro Hotel",
+  //     location: "Vũng Tàu, Việt Nam",
+  //     rating: 4,
+  //     price: 120,
+  //     review : "4.0 (96 Review)"
+  //   },
+  //   {
+  //     id: 3,
+  //     source:  "https://thanhnien.mediacdn.vn/Uploaded/ttt/images/Content/tan-huong/xach-vali-di/2016_12_w2/rex_hotel/Exterior_Rex_9.jpg",
+  //     name: "Armani Hotel",
+  //     location: "Quất Lâm, Giao Thuỷ, Nam Định, Việt Nam",
+  //     rating: 5,
+  //     price: 150,
+  //     review : "5.0 (60 Review)"
+  //   },
+  //   {
+  //     id: 4,
+  //     source: "https://fantasea.vn/wp-content/uploads/2017/10/khach-san-pullman-ha-noi.jpg",
+  //     name: "Kasbah Du Toubkal Hotel",
+  //     location: "Phố Cổ, Hà Nội, Việt Nam",
+  //     rating: 3,
+  //     price: 200,
+  //     review : "3.0 (120 Review)"
+  //   },
+  //   {
+  //     id: 5,
+  //     source: "https://motortrip.vn/wp-content/uploads/2022/03/khach-san-15.jpg",
+  //     name: "Orson Hotel",
+  //     location: "TP.Hồ Chí Minh, Việt Nam",
+  //     rating: 4,
+  //     price: 250,
+  //     review : "4.0 (200 Review)"
+  //   },
+  // ];
   const images = [
     {
       id: 1,
@@ -138,7 +140,7 @@ const HomePageScreen = () => {
   );
   const renderBestHotels = ({ item }) => (
     <View style={styles.hotelItem}>
-      <Image source={item.source} style={styles.hotelImage} />
+      <Image source={{ uri: item.source }} style={styles.hotelImage} />
       <View style={styles.hotelRating}>
         {[1, 2, 3, 4, 5].map((star) => (
           <TouchableOpacity key={star}>
@@ -165,7 +167,7 @@ const HomePageScreen = () => {
   );
   const renderHotels = ({ item }) => (
     <View key={item.id} style={styles.hotelItem1}>
-      <Image source={item.source} style={styles.hotelImage1} />
+      <Image source={{ uri: item.source }} style={styles.hotelImage1} />
       <View style={styles.hotelTitle}>
         <View style={styles.hotelRating1}>
           {[1, 2, 3, 4, 5].map((star) => (

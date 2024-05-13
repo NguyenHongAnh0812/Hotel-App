@@ -57,6 +57,17 @@ app.get('/users', (req, res) => {
     res.json(results);
   });
 });
+app.get('/hotels', function(req, res) {
+  connection.query('SELECT * FROM hotels', function(err, rows) {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu: ' + err.stack);
+      return res.status(500).json({ error: 'Lỗi truy vấn cơ sở dữ liệu' });
+    }
+
+    // Trả về dữ liệu dưới dạng JSON
+    res.json(rows);
+  });
+});
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
