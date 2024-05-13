@@ -26,7 +26,7 @@ const LoginScreen = () => {
     }
 
     // Gửi thông tin đăng nhập đến API để xác minh
-    fetch("http://192.168.1.89:3000/login", {
+    fetch("http://172.20.10.2:3000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

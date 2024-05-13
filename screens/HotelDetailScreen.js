@@ -11,10 +11,13 @@ import {
   Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 const HotelDetailScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute()
+  const {hotelId} = route.params
+  console.log(hotelId)
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const handleSelectDate = () => {
@@ -82,6 +85,7 @@ const HotelDetailScreen = () => {
     },
     // Thêm các mục ảnh khác vào đây
   ];
+  
   const renderImageItem = ({ item }) => (
     <View style={styles.photoContainer}>
       <Image source={item.source} style={styles.photo} />

@@ -125,9 +125,10 @@ const HomePageScreen = () => {
     },
     // Thêm các mục ảnh khác vào đây
   ];
-  const handleDetail = () => {
+  const handleDetail = ({hotelId}) => {
     // Điều hướng sang trang đăng ký
-    navigation.navigate("HotelDetail");
+    console.log(hotelId)
+    
   };
   const renderImageItem = ({ item }) => (
     <View style={styles.imageContainer}>
@@ -157,7 +158,7 @@ const HomePageScreen = () => {
         <Text style={styles.locationText}>{item.location}</Text>
       </View>
       <Text style={styles.hotelPrice}>${item.price}/night</Text>
-      <TouchableOpacity onPress={handleDetail} style={styles.bookButton}>
+      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id})} style={styles.bookButton}>
         <Text  style={styles.bookButtonText}>Detail</Text>
       </TouchableOpacity>
     </View>
