@@ -82,11 +82,31 @@ app.get('/hotels/:id', function (req, res) {
   res.json(hotel);
   });
 });
+app.get('/checkbookings/:idHotel', (req, res) => {
+  const idHotel = req.params.idHotel;
+  const userId = req.query.userId;
+  console.log(userId)
+  const bookingQuery = `SELECT * FROM booking WHERE idHotel = ${idHotel} AND isCheck = 'false' AND idUser = ${userId}`;
+
+  connection.query(bookingQuery, (error, bookingResults) => {
+    if (error) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
+      res.status(500).json({ error: 'Lỗi truy vấn cơ sở dữ liệu' });
+      return;
+    }
+
+    if (bookingResults.length > 0) {
+      res.json(false); // Có booking chưa được kiểm tra
+    } else {
+      res.json(true); // Không có booking chưa được kiểm tra
+    }
+  });
+});
 app.post('/add-booking', (req, res) => {
-  const { idUser, idHotel, date, guests, total } = req.body;
+  const { idUser, idHotel, date, guests, total, isCheck } = req.body;
 
   // Truy vấn INSERT vào bảng booking
-  const query = `INSERT INTO booking (idUser, idHotel, date, guests, total) VALUES ('${idUser}', '${idHotel}', '${date}', '${guests}', '${total}')`;
+  const query = `INSERT INTO booking (idUser, idHotel, date, guests, total, isCheck) VALUES ('${idUser}', '${idHotel}', '${date}', '${guests}', '${total}', '${isCheck}')`;
   connection.query(query, (error, results) => {
     if (error) {
       console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
@@ -104,8 +124,9 @@ app.post('/add-booking', (req, res) => {
     }
   });
 });
-app.get('/listbooking', (req, res) => {
-  const bookingQuery = 'SELECT idHotel FROM booking';
+app.get('/listbookingupcoming/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const bookingQuery = `SELECT idHotel FROM booking WHERE isCheck = 'false' AND idUser = ${userId} `;
   let hotelCount = {};
 
   connection.query(bookingQuery, (error, bookingResults) => {
@@ -168,6 +189,88 @@ app.get('/listbooking', (req, res) => {
     });
   });
 });
+app.get('/listbookingpass/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const bookingQuery = `SELECT idHotel FROM booking WHERE isCheck = 'true' AND idUser = ${userId} `;
+  let hotelCount = {};
+
+  connection.query(bookingQuery, (error, bookingResults) => {
+    if (error) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
+      return;
+    }
+
+    // Lấy danh sách idHotel từ kết quả truy vấn booking
+    const idHotels = bookingResults.map(result => result.idHotel);
+
+    // Nếu danh sách idHotel rỗng, trả về danh sách khách sạn trống
+    if (idHotels.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    // Lặp qua danh sách idHotels và tăng số lần xuất hiện của mỗi khách sạn
+    idHotels.forEach(idHotel => {
+      if (hotelCount[idHotel]) {
+        hotelCount[idHotel]++;
+      } else {
+        hotelCount[idHotel] = 1;
+      }
+    });
+
+    // Chuyển đổi đối tượng hotelCount thành mảng chứa thông tin khách sạn và số lần xuất hiện
+    const hotelList = Object.keys(hotelCount).map(idHotel => ({
+      hotelId: idHotel,
+      count: hotelCount[idHotel]
+    }));
+
+    // Truy vấn thông tin về từng khách sạn
+    let completedQueries = 0;
+    let listHotels = [];
+
+    hotelList.forEach(hotel => {
+      const hotelQuery = 'SELECT * FROM hotels WHERE id = ?';
+      const params = [hotel.hotelId];
+
+      connection.query(hotelQuery, params, (error, hotelResults) => {
+        if (error) {
+          console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
+          return;
+        }
+
+        listHotels.push({
+          hotel: hotelResults[0],
+          count: hotel.count
+        });
+
+        completedQueries++;
+
+        // Kiểm tra nếu tất cả các truy vấn đã hoàn thành
+        if (completedQueries === hotelList.length) {
+          // Trả về danh sách khách sạn đã thu thập được
+          res.json(listHotels);
+        }
+      });
+    });
+  });
+});
+app.put('/updatebooking/:idHotel', (req, res) => {
+  const idHotel = req.params.idHotel;
+  const idUser = req.query.userId;
+  const updateQuery = `UPDATE booking SET isCheck = 'true' WHERE idHotel = ${idHotel} AND idUser=${idUser}`;
+
+  connection.query(updateQuery, (error, updateResult) => {
+    if (error) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
+      return;
+    }
+
+    res.json({ message: 'Cập nhật thành công!' });
+  });
+});
+
+
+
 
 
 const PORT = 3000;

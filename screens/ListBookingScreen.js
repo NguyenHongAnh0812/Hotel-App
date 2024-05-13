@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,32 +11,39 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 const ListBookingScreen = () => {
-    const navigation=useNavigation();
-    const [bestHotels, setBestHotels] = useState([]);
-    const [bestHotels1, setBestHotels1] = useState([]);
-    useEffect(() => {
-      fetch('http://192.168.1.89:3000/listbooking')
-        .then(response => response.json())
-        .then(data => {
-          setBestHotels(data);
-          setBestHotels1(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
-        })
-        .catch(error => {
-          console.error('Lỗi khi lấy dữ liệu:', error);
-        });
-    }, []);
+  const navigation = useNavigation();
+  const [bestHotels, setBestHotels] = useState([]);
+  const [bestHotels1, setBestHotels1] = useState([]);
+  useEffect(() => {
+    fetch(`http://192.168.1.89:3000/listbookingupcoming/${userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setBestHotels(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
+    fetch(`http://192.168.1.89:3000/listbookingpass/${userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setBestHotels1(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
+  }, []);
   const [chose, setChose] = useState(true);
-  const route = useRoute()
-  const {userId} = route.params
+  const route = useRoute();
+  const { userId } = route.params;
   const handlePress = () => {
     setChose(!chose); // Toggle the value of `chose` when the button is pressed
   };
   const handleBack = () => {
-    navigation.navigate('HomePage' , {userId: userId});
-  }
+    navigation.navigate("HomePage", { userId: userId });
+  };
   const renderHotels = ({ item }) => (
     <View key={item.hotel.id} style={styles.hotelItem1}>
-      <Image source={{uri: item.hotel.source}} style={styles.hotelImage1} />
+      <Image source={{ uri: item.hotel.source }} style={styles.hotelImage1} />
       <View style={styles.hotelTitle}>
         <View style={styles.hotelRating1}>
           {[1, 2, 3, 4, 5].map((star) => (
@@ -57,17 +64,57 @@ const ListBookingScreen = () => {
         </View>
         <Text style={styles.hotelPrice1}>${item.hotel.price}/night</Text>
       </View>
-      <TouchableOpacity style={styles.bookButton1}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("HotelDetail", {
+            userId: userId,
+            hotelId: item.hotel.id,
+          })
+        }
+        style={styles.bookButton1}
+      >
         <Text style={styles.bookButtonText1}>View Detail</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bookButton2}>
+      <TouchableOpacity
+        onPress={() => {
+          console.log(item.hotel.id);
+          fetch(`http://192.168.1.89:3000/updatebooking/${item.hotel.id}?userId=${userId}`, {
+            method: "PUT",
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data.message);
+              navigation.navigate("ListBooking", { userId: userId });
+            })
+            .catch((error) => {
+              console.error("Lỗi khi gửi yêu cầu cập nhật: " + error);
+            });
+            fetch(`http://192.168.1.89:3000/listbookingupcoming/${userId}`)
+            .then((response) => response.json())
+            .then((data) => {
+              setBestHotels(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+            })
+            .catch((error) => {
+              console.error("Lỗi khi lấy dữ liệu:", error);
+            });
+          fetch(`http://192.168.1.89:3000/listbookingpass/${userId}`)
+            .then((response) => response.json())
+            .then((data) => {
+              setBestHotels1(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+            })
+            .catch((error) => {
+              console.error("Lỗi khi lấy dữ liệu:", error);
+            });
+        }}
+        style={styles.bookButton2}
+      >
         <Text style={styles.bookButtonText2}>Success</Text>
       </TouchableOpacity>
     </View>
   );
   const renderHotels1 = ({ item }) => (
     <View key={item.hotel.id} style={styles.hotelItem1}>
-      <Image source={{uri: item.hotel.source}} style={styles.hotelImage1} />
+      <Image source={{ uri: item.hotel.source }} style={styles.hotelImage1} />
       <View style={styles.hotelTitle}>
         <View style={styles.hotelRating1}>
           {[1, 2, 3, 4, 5].map((star) => (
@@ -88,7 +135,15 @@ const ListBookingScreen = () => {
         </View>
         <Text style={styles.hotelPrice1}>${item.hotel.price}/night</Text>
       </View>
-      <TouchableOpacity style={styles.bookButton1}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("HotelDetail", {
+            userId: userId,
+            hotelId: item.hotel.id,
+          })
+        }
+        style={styles.bookButton1}
+      >
         <Text style={styles.bookButtonText1}>Book Again</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bookButton2}>
@@ -99,7 +154,13 @@ const ListBookingScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Bookings</Text>
-      <Icon onPress={handleBack} name="arrow-left" size={25} color="black" style={{position:'absolute', top:40,left:30,}} />
+      <Icon
+        onPress={handleBack}
+        name="arrow-left"
+        size={25}
+        color="black"
+        style={{ position: "absolute", top: 40, left: 30 }}
+      />
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={{
@@ -126,7 +187,7 @@ const ListBookingScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={{
-            backgroundColor: chose ? "#a9a9a9" : "#007bff", 
+            backgroundColor: chose ? "#a9a9a9" : "#007bff",
             borderRadius: 8,
             paddingHorizontal: 12,
             paddingVertical: 8,
@@ -139,7 +200,7 @@ const ListBookingScreen = () => {
         >
           <Text
             style={{
-              color: chose ? "black" : "white", 
+              color: chose ? "black" : "white",
               fontSize: 16,
               fontWeight: "bold",
             }}
@@ -150,10 +211,11 @@ const ListBookingScreen = () => {
       </View>
 
       <ScrollView>
-        {
-            chose ? bestHotels.map((item) => renderHotels({ item , key: item.hotel.id })) : bestHotels1.map((item) => renderHotels1({ item, key: item.hotel.id }))
-        }
-        
+        {chose
+          ? bestHotels.map((item) => renderHotels({ item, key: item.hotel.id }))
+          : bestHotels1.map((item) =>
+              renderHotels1({ item, key: item.hotel.id })
+            )}
       </ScrollView>
     </View>
   );

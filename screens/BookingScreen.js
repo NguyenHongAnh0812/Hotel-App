@@ -58,7 +58,8 @@ const BookingScreen = () => {
         idHotel: hotelId,
         date: selectedDate.toLocaleDateString(), // Thay đổi ngày tùy theo yêu cầu của bạn
         guests: number, // Thay đổi số lượng khách tùy theo yêu cầu của bạn
-        total: Number(item.price) + Number(number - 2) * 20, // Thay đổi tổng số tiền tùy theo yêu cầu của bạn
+        total: Number(item.price) + Number(number - 2) * 20,
+        isCheck : "false" // Thay đổi tổng số tiền tùy theo yêu cầu của bạn
       }),
     })
       .then((response) => response.json())

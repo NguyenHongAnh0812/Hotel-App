@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,24 +15,36 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 const HotelDetailScreen = () => {
   const navigation = useNavigation();
-  const route = useRoute()
-  const {hotelId} = route.params
-  const {userId} = route.params
+  const route = useRoute();
+  const { hotelId } = route.params;
+  const { userId } = route.params;
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hotel, setHotel] = useState({});
+  const [check, setCheck] = useState("true");
   useEffect(() => {
     fetch(`http://192.168.1.89:3000/hotels/${hotelId}`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setHotel(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
       })
-      .catch(error => {
-        console.error('Lỗi khi lấy dữ liệu:', error);
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
+    fetch(`http://192.168.1.89:3000/checkbookings/${hotelId}?userId=${userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setCheck(data);
+        console.log(check) // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
       });
   }, []);
   const handleSelectDate = () => {
-    navigation.navigate("Booking" , {hotelId : hotelId, userId : userId});
+    if (check == true)
+      navigation.navigate("Booking", { hotelId: hotelId, userId: userId });
+    else Alert.alert("Bạn đã đặt phòng này và chưa check-out");
     // setShowDatePicker(true);
   };
   const showAlertAndWait = () => {
@@ -95,7 +107,7 @@ const HotelDetailScreen = () => {
     },
     // Thêm các mục ảnh khác vào đây
   ];
-  
+
   const renderImageItem = ({ item }) => (
     <View style={styles.photoContainer}>
       <Image source={item.source} style={styles.photo} />
@@ -129,9 +141,7 @@ const HotelDetailScreen = () => {
         </View>
         <View style={styles.infoDescription}>
           <Text style={styles.infoDescriptionLabel}>Overview</Text>
-          <Text style={styles.infoDescriptionText}>
-            {hotel.overview}
-          </Text>
+          <Text style={styles.infoDescriptionText}>{hotel.overview}</Text>
         </View>
         <View style={styles.containerHeaderPhoto}>
           <Text style={styles.headerPhotoText}>Photo</Text>
@@ -157,7 +167,7 @@ const HotelDetailScreen = () => {
         </View>
         <View style={styles.infoDescription}>
           <Text style={{ marginLeft: 15, fontSize: 15, fontWeight: "bold" }}>
-          {hotel.info}
+            {hotel.info}
           </Text>
         </View>
         <View style={styles.infoDescription}>
@@ -225,17 +235,17 @@ const HotelDetailScreen = () => {
           <Text style={styles.bookButtonText}>Booking</Text>
         </TouchableOpacity>
         {showDatePicker && (
-                <DateTimePicker
-                  value={selectedDate}
-                  mode="date"
-                  display="default"
-                  onChange={handleDateChange}
-                  textColor="black"
-                  backgroundColor="#000"
-                  borderRadius="20"
-                  justifyContent="center"
-                  alignItems="center"
-                />
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+            textColor="black"
+            backgroundColor="#000"
+            borderRadius="20"
+            justifyContent="center"
+            alignItems="center"
+          />
         )}
       </View>
     </View>
