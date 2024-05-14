@@ -11,11 +11,12 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 const ListBookingScreen = () => {
+  const ip = "192.168.1.89"
   const navigation = useNavigation();
   const [bestHotels, setBestHotels] = useState([]);
   const [bestHotels1, setBestHotels1] = useState([]);
   useEffect(() => {
-    fetch(`http://192.168.1.89:3000/listbookingupcoming/${userId}`)
+    fetch(`http://${ip}:3000/listbookingupcoming/${userId}`)
       .then((response) => response.json())
       .then((data) => {
         setBestHotels(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
@@ -23,7 +24,7 @@ const ListBookingScreen = () => {
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
-    fetch(`http://192.168.1.89:3000/listbookingpass/${userId}`)
+    fetch(`http://${ip}:3000/listbookingpass/${userId}`)
       .then((response) => response.json())
       .then((data) => {
         setBestHotels1(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
@@ -66,7 +67,7 @@ const ListBookingScreen = () => {
       </View>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("HotelDetail", {
+          navigation.navigate("BookingPastDetail", {
             userId: userId,
             hotelId: item.hotel.id,
           })
@@ -78,32 +79,24 @@ const ListBookingScreen = () => {
       <TouchableOpacity
         onPress={() => {
           console.log(item.hotel.id);
-          fetch(`http://192.168.1.89:3000/updatebooking/${item.hotel.id}?userId=${userId}`, {
+          fetch(`http://${ip}:3000/updatebooking/${item.hotel.id}?userId=${userId}`, {
             method: "PUT",
           })
             .then((response) => response.json())
             .then((data) => {
               console.log(data.message);
-              navigation.navigate("ListBooking", { userId: userId });
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: "ListBooking",
+                    params: { userId: userId },
+                  },
+                ],
+              });
             })
             .catch((error) => {
               console.error("Lỗi khi gửi yêu cầu cập nhật: " + error);
-            });
-            fetch(`http://192.168.1.89:3000/listbookingupcoming/${userId}`)
-            .then((response) => response.json())
-            .then((data) => {
-              setBestHotels(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
-            })
-            .catch((error) => {
-              console.error("Lỗi khi lấy dữ liệu:", error);
-            });
-          fetch(`http://192.168.1.89:3000/listbookingpass/${userId}`)
-            .then((response) => response.json())
-            .then((data) => {
-              setBestHotels1(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
-            })
-            .catch((error) => {
-              console.error("Lỗi khi lấy dữ liệu:", error);
             });
         }}
         style={styles.bookButton2}

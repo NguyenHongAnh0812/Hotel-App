@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
+  const ip = "192.168.1.89"
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
@@ -26,7 +27,7 @@ const LoginScreen = () => {
     }
 
     // Gửi thông tin đăng nhập đến API để xác minh
-    fetch("http://192.168.1.89:3000/login", {
+    fetch(`http://${ip}:3000/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

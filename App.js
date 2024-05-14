@@ -11,6 +11,7 @@ import HomePageScreen from './screens/HomePageScreen';
 import HotelDetailScreen from './screens/HotelDetailScreen';
 import BookingScreen from './screens/BookingScreen'
 import ListBookingScreen from './screens/ListBookingScreen';
+import BookingPastDetail from './screens/BookingPastDetail'
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Stack.Screen name="HotelDetail" component={HotelDetailScreen} />
         <Stack.Screen name="Booking" component={BookingScreen} />
         <Stack.Screen name="ListBooking" component={ListBookingScreen} />
+        <Stack.Screen name="BookingPastDetail" component={BookingPastDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

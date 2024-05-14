@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import {
   View,
@@ -17,25 +17,26 @@ import { BottomNavigation } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./LoginScreen";
 import WelcomeScreen from "./WelcomeScreen";
-import { useNavigation,useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const HomePageScreen = () => {
+  const ip = "192.168.1.89";
   const [index, setIndex] = useState(0);
-  const route = useRoute()
-  const {userId} = route.params
-  console.log(userId)
+  const route = useRoute();
+  const { userId } = route.params;
+  console.log(userId);
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation();
   const [bestHotels, setBestHotels] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.1.89:3000/hotels')
-      .then(response => response.json())
-      .then(data => {
+    fetch(`http://${ip}:3000/hotels`)
+      .then((response) => response.json())
+      .then((data) => {
         setBestHotels(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
       })
-      .catch(error => {
-        console.error('Lỗi khi lấy dữ liệu:', error);
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
       });
   }, []);
   const images = [
@@ -101,7 +102,6 @@ const HomePageScreen = () => {
               color={star <= item.rating ? "gold" : "gray"}
             />
           </TouchableOpacity>
-
         ))}
         <Text style={{ marginLeft: 10 }}>{item.review}</Text>
       </View>
@@ -111,8 +111,16 @@ const HomePageScreen = () => {
         <Text style={styles.locationText}>{item.location}</Text>
       </View>
       <Text style={styles.hotelPrice}>${item.price}/night</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id , userId: userId})} style={styles.bookButton}>
-        <Text  style={styles.bookButtonText}>Detail</Text>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("HotelDetail", {
+            hotelId: item.id,
+            userId: userId,
+          })
+        }
+        style={styles.bookButton}
+      >
+        <Text style={styles.bookButtonText}>Detail</Text>
       </TouchableOpacity>
     </View>
   );
@@ -130,9 +138,8 @@ const HomePageScreen = () => {
               />
             </TouchableOpacity>
           ))}
-          
         </View>
-        <Text style={{ }}>{item.review}</Text>
+        <Text style={{}}>{item.review}</Text>
         <Text style={styles.hotelName1}>{item.name}</Text>
         <View style={styles.locationContainer1}>
           <Icon name="map-marker" size={16} color="gray" />
@@ -140,8 +147,16 @@ const HomePageScreen = () => {
         </View>
         <Text style={styles.hotelPrice1}>${item.price}/night</Text>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate("HotelDetail", {hotelId: item.id, userId: userId})} style={styles.bookButton1}>
-        <Text  style={styles.bookButtonText1}>Detail</Text>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("HotelDetail", {
+            hotelId: item.id,
+            userId: userId,
+          })
+        }
+        style={styles.bookButton1}
+      >
+        <Text style={styles.bookButtonText1}>Detail</Text>
       </TouchableOpacity>
     </View>
   );
@@ -154,6 +169,22 @@ const HomePageScreen = () => {
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <Text style={styles.title}>Welcomeback, Hong Anh!</Text>
+        <Icon
+          onPress={() => {
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: "Login",
+                },
+              ],
+            });
+          }}
+          style={{ position: "absolute", right: 20, top: 45 }}
+          name="sign-out"
+          size={30}
+          color="#fff"
+        />
         <View style={styles.searchContainer1}>
           <TextInput
             style={styles.searchInput}
@@ -209,19 +240,61 @@ const HomePageScreen = () => {
         </View>
       </ScrollView>
       <View style={styles.tabBottom}>
-        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => console.log("Home button pressed")}>
+        <TouchableOpacity
+          style={{
+            width: "25%",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRightWidth: 1,
+            borderRightColor: "#d9d9d9",
+          }}
+          onPress={() => console.log("Home button pressed")}
+        >
           <Icon name="home" size={20} color="black" />
           <Text>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => navigation.navigate("ListBooking", {userId: userId})}>
+        <TouchableOpacity
+          style={{
+            width: "25%",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRightWidth: 1,
+            borderRightColor: "#d9d9d9",
+          }}
+          onPress={() => { navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "ListBooking",
+                params: { userId: userId },
+              },
+            ],
+          });}}
+        >
           <Icon name="calendar" size={20} color="black" />
           <Text>Booking</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',borderRightWidth:1,borderRightColor:"#d9d9d9"}} onPress={() => console.log("About button pressed")}>
+        <TouchableOpacity
+          style={{
+            width: "25%",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRightWidth: 1,
+            borderRightColor: "#d9d9d9",
+          }}
+          onPress={() => console.log("About button pressed")}
+        >
           <Icon name="bell" size={20} color="black" />
           <Text>Notification</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{width:"25%",justifyContent:'center',alignItems:'center',}} onPress={() => console.log("Account button pressed")}>
+        <TouchableOpacity
+          style={{
+            width: "25%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={() => console.log("Account button pressed")}
+        >
           <Icon name="user" size={20} color="black" />
           <Text>Account</Text>
         </TouchableOpacity>
@@ -255,7 +328,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: 18,
     color: "#fff",
-    marginTop:20,
+    marginTop: 20,
   },
   searchContainer1: {
     width: "90%",
@@ -466,8 +539,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#1e90ff",
     height: 50,
-    borderTopLeftRadius:30,
-    borderTopRightRadius:30,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
   },
 });
 

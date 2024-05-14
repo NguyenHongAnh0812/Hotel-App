@@ -17,8 +17,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { CheckBox } from "react-native-elements";
 
 const BookingScreen = () => {
-  const ip = "192.168.1.89"
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const ip = "192.168.1.89";
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nameVisa, setNameVisa] = useState("Visa card not added yet");
   const [number, setNumber] = useState(2);
@@ -31,9 +33,9 @@ const BookingScreen = () => {
   const [expiryDate, setExpiryDate] = useState("");
   const [isBookingSuccessVisible, setIsBookingSuccessVisible] = useState(false);
   const navigation = useNavigation();
-  const route = useRoute()
-  const {hotelId} = route.params
-  const {userId} = route.params
+  const route = useRoute();
+  const { hotelId } = route.params;
+  const { userId } = route.params;
   const [item, setItem] = useState({});
   useEffect(() => {
     fetch(`http://${ip}:3000/hotels/${hotelId}`)
@@ -44,43 +46,49 @@ const BookingScreen = () => {
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
+      fetch(`http://${ip}:3000/bookingdetail/${userId}/${hotelId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSelectedDate(data[0].date)
+        setNumber(data[0].guests) // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
+      fetch(`http://${ip}:3000/user/${userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setName(data[0].name)
+        setPhone(data[0].phone_number) // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
   }, []);
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
-  const handlePayNow = () => {
-    fetch(`http://${ip}:3000/add-booking`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        idUser: userId,
-        idHotel: hotelId,
-        date: selectedDate.toLocaleDateString(), // Thay đổi ngày tùy theo yêu cầu của bạn
-        guests: number, // Thay đổi số lượng khách tùy theo yêu cầu của bạn
-        total: Number(item.price) + Number(number - 2) * 20,
-        isCheck : "false" // Thay đổi tổng số tiền tùy theo yêu cầu của bạn
-      }),
-    })
+  const handleCancel = () => {
+    fetch(`http://${ip}:3000/bookingdelete/${userId}/${hotelId}`)
       .then((response) => response.json())
       .then((data) => {
-        // Xử lý dữ liệu phản hồi
-        console.log(data);
+         // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+         Alert.alert("Huỷ phòng thành công")
+         navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "ListBooking",
+                params: { userId: userId },
+              },
+            ],
+          });
       })
       .catch((error) => {
-        // Xử lý lỗi
-        console.error(error);
+        console.error("Lỗi khi lấy dữ liệu:", error);
       });
-    if (
-      isChecked == false ||
-      (isChecked == true && nameVisa != "Visa card not added yet")
-    )
-      setIsBookingSuccessVisible(!isBookingSuccessVisible);
-    else if (isChecked == true && nameVisa == "Visa card not added yet")
-      Alert.alert("Vui lòng add thẻ visa");
-    else setIsBookingSuccessVisible(!isBookingSuccessVisible);
-  }
+    
+  };
   // setTotal(item.price)
   const handleAddToCart = () => {
     setNameVisa(cardName);
@@ -91,39 +99,35 @@ const BookingScreen = () => {
     setExpiryDate("");
   };
 
-  const increaseNumber = () => {
-    const k = number + 1;
-    if (k > 5) Alert.alert("Quá số lượng người ở mỗi phòng");
-    else setNumber(k);
-  };
-
-  const decreaseNumber = () => {
-    const k = number - 1;
-    if (k == 0) Alert.alert("Phải có ít nhất 1 người");
-    else setNumber(k);
-  };
-  const handleEditDate = () => {
-    setShowDatePicker(true);
-  };
-  const handleDateChange = (event, date) => {
-    if (date != undefined) {
-      setShowDatePicker(false);
-      setSelectedDate(date);
-    }
-  };
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
   };
-  const handleBackToHome = () => {
-    
+  const handleBack = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: "ListBooking",
+          params: { userId: userId },
+        },
+      ],
+    });
   };
   const handleBookingSuccess = () => {
     setIsBookingSuccessVisible(false);
-    navigation.navigate("HomePage" , {userId: userId});
+    navigation.navigate("HomePage", { userId: userId });
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.headerTitle}>Booking Detail</Text>
+      <Icon
+        onPress={handleBack}
+        name="arrow-left"
+        size={25}
+        color="black"
+        style={{ position: "absolute", top: 40, left: 30 }}
+      />
       <View key={item.id} style={styles.hotelItem1}>
         <Image source={{ uri: item.source }} style={styles.hotelImage1} />
         <View style={styles.hotelTitle}>
@@ -154,104 +158,31 @@ const BookingScreen = () => {
           <View style={styles.buttonContainer}>
             <Text style={styles.infoDescriptionLabel}>Date :</Text>
             <Text style={styles.infoDescriptionText}>
-              {selectedDate.toLocaleDateString()}
+              {selectedDate}
             </Text>
-            <View style={styles.buttonContainer1}>
-              <Icon
-                onPress={handleEditDate}
-                name="edit"
-                style={styles.editIcon}
-              />
-            </View>
-            {showDatePicker && (
-              <DateTimePicker
-                value={selectedDate}
-                mode="date"
-                display="default"
-                onChange={handleDateChange}
-                textColor="black"
-                backgroundColor="#000"
-                borderRadius="20"
-                justifyContent="center"
-                alignItems="center"
-              />
-            )}
           </View>
         </View>
         <View style={styles.infoDescription}>
           <View style={styles.buttonContainer}>
             <Text style={styles.infoDescriptionLabel}>Guests :</Text>
             <Text style={styles.numberContainer}>{number}</Text>
-            <View style={styles.buttonContainer1}>
-              <TouchableOpacity onPress={increaseNumber} style={styles.button}>
-                <Icon
-                  name="plus"
-                  fontSize="20"
-                  color="#000"
-                  alignSelf="center"
-                  justifyContent="center"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={decreaseNumber} style={styles.button}>
-                <Icon
-                  name="minus"
-                  fontSize="20"
-                  color="#000"
-                  alignSelf="center"
-                />
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
         <View style={styles.containerHeader}>
-          <Text style={styles.headerText}>Chose how to pay</Text>
+          <Text style={styles.headerText}>Your Info Booking</Text>
         </View>
-        <View style={{ marginLeft: 36 }}>
-          <Text
-            style={{
-              fontSize: 15,
-              color: "#000",
-              fontWeight: "bold",
-              marginTop: 10,
-            }}
-          >
-            Pay in Visa
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ fontSize: 15, color: "#454545" }}>
-              Pay the total now and you're all set.
+        <View style={styles.infoDescription}>
+          <View style={styles.buttonContainer}>
+            <Text style={styles.infoDescriptionLabel}>Name :</Text>
+            <Text style={styles.infoDescriptionText}>
+              {name}
             </Text>
-            <CheckBox checked={isChecked} onPress={toggleCheckbox} />
           </View>
         </View>
-        <View style={{ marginLeft: 36 }}>
-          <Text
-            style={{
-              fontSize: 15,
-              color: "#000",
-              fontWeight: "bold",
-              marginTop: 10,
-            }}
-          >
-            Pay after check-in
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ fontSize: 15, color: "#454545" }}>
-              Pay after check-in
-            </Text>
-            <CheckBox checked={!isChecked} onPress={toggleCheckbox} />
+        <View style={styles.infoDescription}>
+          <View style={styles.buttonContainer}>
+            <Text style={styles.infoDescriptionLabel}>Phone :</Text>
+            <Text style={styles.numberContainer}>{phone}</Text>
           </View>
         </View>
         {isChecked ? (
@@ -368,39 +299,9 @@ const BookingScreen = () => {
             $ {Number(item.price) + Number(number - 2) * 20}
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={handlePayNow}
-          style={styles.bookButton}
-        >
-          <Text style={styles.bookButtonText}>Pay Now</Text>
+        <TouchableOpacity onPress={handleCancel} style={styles.bookButton}>
+          <Text style={styles.bookButtonText}>Cancel</Text>
         </TouchableOpacity>
-        <Modal
-          visible={isBookingSuccessVisible}
-          onRequestClose={handleBookingSuccess}
-          transparent
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.bookingSuccessContent}>
-              <View style={styles.circle}>
-                <Icon name="check" size={20} color="#fff" />
-              </View>
-              <Text style={styles.bookingSuccessText}>Payment Received</Text>
-              <Text style={styles.bookingSuccessText}>Successfully</Text>
-              <Text>Congratulations</Text>
-              <Text style={{ marginBottom: 30 }}>
-                Your booking has been confirmed
-              </Text>
-              <TouchableOpacity
-                onPress={handleBookingSuccess}
-                style={styles.okButton}
-              >
-                <Text style={styles.okButtonText}>
-                  OK
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
       </View>
     </View>
   );
@@ -410,6 +311,15 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     backgroundColor: "#fff",
+  },
+  headerTitle: {
+    padding: 20,
+    marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    fontSize: 20,
+    fontWeight: "bold",
   },
   hotelItem1: {
     flexDirection: "row",
@@ -550,16 +460,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   infoDescriptionText: {
-    fontSize: 14,
+    fontSize: 16,
     // marginRight: 150,
     color: "#454545",
     // alignSelf: "center",
     width: "60%",
   },
   numberContainer: {
-    fontSize: 14,
+    fontSize: 16,
     // marginRight: 150,
-    paddingLeft: 20,
+    paddingLeft: 10,
     color: "#454545",
     // alignSelf: "center",
     width: "60%",
@@ -615,7 +525,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   infoDescriptionTextPrice: {
-    fontSize: 15,
+    fontSize: 16,
     color: "#454545",
   },
   infoDescriptionTotal: {

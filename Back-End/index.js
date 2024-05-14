@@ -44,9 +44,25 @@ app.post('/login', (req, res) => {
     }
   });
 });
-app.get('/users', (req, res) => {
+app.post('/register', (req, res) => {
+  // Extract the registration data from the request body
+  const { name, email, password, phone_number } = req.body;
+  const query = `INSERT INTO users (name, email, password, phone_number) VALUES (?, ?, ?, ?)`;
+
+  // Execute the query with the registration data
+  connection.query(query, [name, email, password, phone_number], (error, results) => {
+    if (error) {
+      console.error('Error inserting data:', error);
+      res.status(500).json({ message: 'An error occurred during registration.' });
+    } else {
+      res.status(200).json({ message: 'Registration successful!' });
+    }
+  });
+});
+app.get('/user/:idUser', (req, res) => {
   // Gửi truy vấn SELECT
-  const query = 'SELECT * FROM users';
+  const idUser = req.params.idUser;
+  const query = `SELECT * FROM users WHERE id = ${idUser}`;
   connection.query(query, (error, results) => {
     if (error) {
       console.error('Lỗi truy vấn:', error);
@@ -268,8 +284,40 @@ app.put('/updatebooking/:idHotel', (req, res) => {
     res.json({ message: 'Cập nhật thành công!' });
   });
 });
+app.get('/bookingdetail/:idUser/:idHotel', (req, res) => {
+  // Extract the idUser and idHotel from the request parameters
+  const { idUser, idHotel } = req.params;
 
+  // Create an SQL query to fetch booking information based on idUser and idHotel
+  const query = `SELECT * FROM booking WHERE idUser = ? AND idHotel = ? AND isCheck = 'false'`;
 
+  // Execute the query with the provided parameters
+  connection.query(query, [idUser, idHotel], (error, results) => {
+    if (error) {
+      console.error('Error retrieving booking information:', error);
+      res.status(500).json({ message: 'An error occurred while retrieving booking information.' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+app.get('/bookingdelete/:idUser/:idHotel', (req, res) => {
+  // Extract the idUser and idHotel from the request parameters
+  const { idUser, idHotel } = req.params;
+
+  // Create an SQL query to delete booking information based on idUser and idHotel
+  const query = `DELETE FROM booking WHERE idUser = ? AND idHotel = ? AND isCheck = 'false'`;
+
+  // Execute the query with the provided parameters
+  connection.query(query, [idUser, idHotel], (error, results) => {
+    if (error) {
+      console.error('Error deleting booking information:', error);
+      res.status(500).json({ message: 'An error occurred while deleting booking information.' });
+    } else {
+      res.status(200).json({ message: 'Booking information deleted successfully.' });
+    }
+  });
+});
 
 
 

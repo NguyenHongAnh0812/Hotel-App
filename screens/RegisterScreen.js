@@ -13,14 +13,39 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 const RegisterScreen = () => {
+  const ip = "192.168.1.89";
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const navigation = useNavigation();
   const handleRegister = () => {
-    Alert.alert("Bạn đã đăng ký tài khoản thành công. Hãy đăng nhập nào !");
-    navigation.navigate("Login");
+    if (name == "" || email == "" || password == "" || phoneNumber == "") {
+      Alert.alert("Vui long điền đầy đủ các thông tin");
+    } else {
+      fetch(`http://${ip}:3000/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password,
+          phone_number: phoneNumber,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Registration successful:", data);
+          Alert.alert("Bạn đã đăng ký thành công. Hãy đăng nhập !")
+          navigation.navigate("Login");
+        })
+        .catch((error) => {
+          console.error("Error during registration:", error);
+        });
+     
+    }
   };
   const handleLogin = () => {
     navigation.navigate("Login");
@@ -45,8 +70,8 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Enter email"
-        onChangeText={(text) => setUsername(text)}
-        value={username}
+        onChangeText={(text) => setEmail(text)}
+        value={email}
       />
       <TextInput
         style={styles.input}
@@ -58,10 +83,11 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
+        onChangeText={(text) => setPhoneNumber(text)}
         value={phoneNumber}
         // onChangeText={handlePhoneNumberChange}
       />
-      
+
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>

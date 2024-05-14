@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 const HotelDetailScreen = () => {
+  const ip = "192.168.1.89"
   const navigation = useNavigation();
   const route = useRoute();
   const { hotelId } = route.params;
@@ -21,17 +22,21 @@ const HotelDetailScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hotel, setHotel] = useState({});
+  const [images, setImages] = useState([]);
   const [check, setCheck] = useState("true");
   useEffect(() => {
-    fetch(`http://192.168.1.89:3000/hotels/${hotelId}`)
+    fetch(`http://${ip}:3000/hotels/${hotelId}`)
       .then((response) => response.json())
       .then((data) => {
-        setHotel(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+        setHotel(data);
+        const photo = data.photo;
+        const imageArray = photo.split(",");
+        setImages(imageArray) // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
       })
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
-    fetch(`http://192.168.1.89:3000/checkbookings/${hotelId}?userId=${userId}`)
+    fetch(`http://${ip}:3000/checkbookings/${hotelId}?userId=${userId}`)
       .then((response) => response.json())
       .then((data) => {
         setCheck(data);
@@ -62,55 +67,55 @@ const HotelDetailScreen = () => {
       navigation.navigate("Booking");
     }
   };
-  const images = [
-    {
-      id: 1,
-      source: {
-        uri: "https://vtv1.mediacdn.vn/Uploaded/lanchi/2013_09_19/10-hinh-anh-dac-trung-cua-ha-noi-0.jpg",
-      },
-      title: "Hà Nội",
-    },
-    {
-      id: 2,
-      source: {
-        uri: "https://img.daibieunhandan.vn/resize/800x800/Files/Images/2023/07/26/visithue_phao-hoa-2-1690342560540.jpg",
-      },
-      title: "Huế",
-    },
-    {
-      id: 3,
-      source: {
-        uri: "https://toquoc.mediacdn.vn/2020/4/26/da-nang-15878865291212013802504.jpg",
-      },
-      title: "Đà Nẵng",
-    },
-    {
-      id: 4,
-      source: {
-        uri: "https://quangxuong.thanhhoa.gov.vn/portal/Photos/2023-09/89dcdbb35982c49dba-ria-vung-tau.jpg",
-      },
-      title: "Vũng Tàu",
-    },
-    {
-      id: 5,
-      source: {
-        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvrUO6IokoYxBQqWuQKnt_o1TRgjVcPkI6iTuXTky6yw&s",
-      },
-      title: "Cần Thơ",
-    },
-    {
-      id: 6,
-      source: {
-        uri: "https://media.vneconomy.vn/images/upload/2023/02/13/e6927be0-d152-44dc-8a94-71cce7ddfed8.jpeg",
-      },
-      title: "Quảng Ninh",
-    },
-    // Thêm các mục ảnh khác vào đây
-  ];
+  // const images = [
+  //   {
+  //     id: 1,
+  //     source: {
+  //       uri: "https://vtv1.mediacdn.vn/Uploaded/lanchi/2013_09_19/10-hinh-anh-dac-trung-cua-ha-noi-0.jpg",
+  //     },
+  //     title: "Hà Nội",
+  //   },
+  //   {
+  //     id: 2,
+  //     source: {
+  //       uri: "https://img.daibieunhandan.vn/resize/800x800/Files/Images/2023/07/26/visithue_phao-hoa-2-1690342560540.jpg",
+  //     },
+  //     title: "Huế",
+  //   },
+  //   {
+  //     id: 3,
+  //     source: {
+  //       uri: "https://toquoc.mediacdn.vn/2020/4/26/da-nang-15878865291212013802504.jpg",
+  //     },
+  //     title: "Đà Nẵng",
+  //   },
+  //   {
+  //     id: 4,
+  //     source: {
+  //       uri: "https://quangxuong.thanhhoa.gov.vn/portal/Photos/2023-09/89dcdbb35982c49dba-ria-vung-tau.jpg",
+  //     },
+  //     title: "Vũng Tàu",
+  //   },
+  //   {
+  //     id: 5,
+  //     source: {
+  //       uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvrUO6IokoYxBQqWuQKnt_o1TRgjVcPkI6iTuXTky6yw&s",
+  //     },
+  //     title: "Cần Thơ",
+  //   },
+  //   {
+  //     id: 6,
+  //     source: {
+  //       uri: "https://media.vneconomy.vn/images/upload/2023/02/13/e6927be0-d152-44dc-8a94-71cce7ddfed8.jpeg",
+  //     },
+  //     title: "Quảng Ninh",
+  //   },
+  //   // Thêm các mục ảnh khác vào đây
+  // ];
 
   const renderImageItem = ({ item }) => (
     <View style={styles.photoContainer}>
-      <Image source={item.source} style={styles.photo} />
+      <Image source={{uri: item}} style={styles.photo} />
     </View>
   );
   return (
@@ -150,7 +155,7 @@ const HotelDetailScreen = () => {
         <FlatList
           data={images}
           renderItem={renderImageItem}
-          keyExtractor={(item) => item.id.toString()}
+          // keyExtractor={(item) => item.id.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
         />
