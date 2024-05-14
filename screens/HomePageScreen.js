@@ -261,15 +261,9 @@ const HomePageScreen = () => {
             borderRightWidth: 1,
             borderRightColor: "#d9d9d9",
           }}
-          onPress={() => { navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: "ListBooking",
-                params: { userId: userId },
-              },
-            ],
-          });}}
+          onPress={() => {
+            navigation.navigate('ListBooking' ,{userId: userId, checkLoading: 1})
+          }}
         >
           <Icon name="calendar" size={20} color="black" />
           <Text>Booking</Text>

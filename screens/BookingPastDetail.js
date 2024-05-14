@@ -78,7 +78,7 @@ const BookingScreen = () => {
             index: 0,
             routes: [
               {
-                name: "ListBooking",
+                name: "HomePage",
                 params: { userId: userId },
               },
             ],
@@ -103,15 +103,7 @@ const BookingScreen = () => {
     setIsChecked(!isChecked);
   };
   const handleBack = () => {
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: "ListBooking",
-          params: { userId: userId },
-        },
-      ],
-    });
+    navigation.navigate("ListBooking", {userId: userId})
   };
   const handleBookingSuccess = () => {
     setIsBookingSuccessVisible(false);

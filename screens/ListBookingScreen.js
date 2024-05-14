@@ -11,11 +11,11 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 const ListBookingScreen = () => {
-  const ip = "192.168.1.89"
+  const ip = "192.168.1.89";
   const navigation = useNavigation();
   const [bestHotels, setBestHotels] = useState([]);
   const [bestHotels1, setBestHotels1] = useState([]);
-  useEffect(() => {
+  const fetchData = () => {
     fetch(`http://${ip}:3000/listbookingupcoming/${userId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -32,7 +32,8 @@ const ListBookingScreen = () => {
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
-  }, []);
+  };
+  useEffect(() => {fetchData()}, []);
   const [chose, setChose] = useState(true);
   const route = useRoute();
   const { userId } = route.params;
@@ -40,7 +41,15 @@ const ListBookingScreen = () => {
     setChose(!chose); // Toggle the value of `chose` when the button is pressed
   };
   const handleBack = () => {
-    navigation.navigate("HomePage", { userId: userId });
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: "HomePage",
+          params: { userId: userId },
+        },
+      ],
+    });
   };
   const renderHotels = ({ item }) => (
     <View key={item.hotel.id} style={styles.hotelItem1}>
@@ -79,21 +88,17 @@ const ListBookingScreen = () => {
       <TouchableOpacity
         onPress={() => {
           console.log(item.hotel.id);
-          fetch(`http://${ip}:3000/updatebooking/${item.hotel.id}?userId=${userId}`, {
-            method: "PUT",
-          })
+          fetch(
+            `http://${ip}:3000/updatebooking/${item.hotel.id}?userId=${userId}`,
+            {
+              method: "PUT",
+            }
+          )
             .then((response) => response.json())
             .then((data) => {
               console.log(data.message);
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: "ListBooking",
-                    params: { userId: userId },
-                  },
-                ],
-              });
+              fetchData()
+              navigation.navigate("ListBooking", { userId: userId });
             })
             .catch((error) => {
               console.error("Lỗi khi gửi yêu cầu cập nhật: " + error);
