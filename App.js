@@ -11,6 +11,8 @@ import HomePageScreen from './screens/HomePageScreen';
 import HotelDetailScreen from './screens/HotelDetailScreen';
 import SearchNomalScreen from './screens/SearchNomalScreen';
 import CompareScreen from './screens/CompareScreen';
+import AdminScreen from './screens/AdminScreen';
+import AddScreen from './screens/AddScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -26,6 +28,8 @@ export default function App() {
         <Stack.Screen name="HotelDetail" component={HotelDetailScreen} />
         <Stack.Screen name="SearchNomal" component={SearchNomalScreen} />
         <Stack.Screen name="Compare" component={CompareScreen} />
+        <Stack.Screen name="Admin" component={AdminScreen} />
+        <Stack.Screen name="Add" component={AddScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

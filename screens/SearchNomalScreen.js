@@ -1,5 +1,4 @@
-import { useState } from "react";
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,77 +17,53 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./LoginScreen";
 import WelcomeScreen from "./WelcomeScreen";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios';
 
-const SearchNomalScreen = () => {
+const SearchNomalScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const Tab = createBottomTabNavigator();
-  const navigation = useNavigation();
-  const bestHotels = [
-    {
-      id: 1,
-      source: {
-        uri: "https://duonggiahotel.vn/wp-content/uploads/2023/01/4048e2d8302ae874b13b.jpg",
-      },
-      name: "Luxyry Hotel",
-      rating: 3,
-      location: "Đà Nẵng, Việt Nam",
-      price: 100,
-    },
-    {
-      id: 2,
-      source: {
-        uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi9eEaU609SDeE9dkm0aCgu9yp7DvhB1qfn0Cyr3aK8A&s",
-      },
-      name: "Pro Hotel",
-      location: "Vũng Tàu, Việt Nam",
-      rating: 4,
-      price: 120,
-    },
-    {
-      id: 3,
-      source: {
-        uri: "https://thanhnien.mediacdn.vn/Uploaded/ttt/images/Content/tan-huong/xach-vali-di/2016_12_w2/rex_hotel/Exterior_Rex_9.jpg",
-      },
-      name: "Armani Hotel",
-      location: "Quất Lâm, Giao Thuỷ, Nam Định, Việt Nam",
-      rating: 5,
-      price: 150,
-    },
-    {
-      id: 4,
-      source: {
-        uri: "https://fantasea.vn/wp-content/uploads/2017/10/khach-san-pullman-ha-noi.jpg",
-      },
-      name: "Kasbah Du Toubkal Hotel",
-      location: "Phố Cổ, Hà Nội, Việt Nam",
-      rating: 3,
-      price: 200,
-    },
-    {
-      id: 5,
-      source: {
-        uri: "https://motortrip.vn/wp-content/uploads/2022/03/khach-san-15.jpg",
-      },
-      name: "Orson Hotel",
-      location: "TP.Hồ Chí Minh, Việt Nam",
-      rating: 4,
-      price: 250,
-    },
-  ];
+  const navigationn = useNavigation();
+  const [hotels, setHotels] = useState([]);
+  const fetchHotels = async () => {
+    try {
+      const response = await axios.get('http://10.0.2.2:8080/hotel_app/hotel');
+      const fetchedHotels = response.data;
+      setHotels(fetchedHotels);
+    } catch (error) {
+      console.error('Đã xảy ra lỗi khi gọi API:', error);
+    }
+  };
+  const [searchName, setSearchName] = useState("");
+  const [searchAdress, setSearchAdress] = useState("");
+  const handleNameSearch = (text) => {
+    setSearchName(text);
+  }
+  const handleAdressSearch = (text) => {
+    setSearchAdress(text);
+  }
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchHotels();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const handleDetail = () => {
-    navigation.navigate("HotelDetail");
+    navigationn.navigate("HotelDetail");
   };
   const renderHotels = ({ item }) => (
+    // Render each hotel item here
     <View key={item.id} style={styles.hotelItem1}>
-      <Image source={item.source} style={styles.hotelImage1} />
+      <Image source={{ uri: item.img }} style={styles.hotelImage1} />
       <View style={styles.hotelTitle}>
         <View style={styles.hotelRating1}>
           {[1, 2, 3, 4, 5].map((star) => (
             <TouchableOpacity key={star}>
               <Icon
-                name={star <= item.rating ? "star" : "star-o"}
+                name={star <= item.star ? "star" : "star-o"}
                 size={18}
-                color={star <= item.rating ? "gold" : "gray"}
+                color={star <= item.star ? "gold" : "gray"}
               />
             </TouchableOpacity>
           ))}
@@ -96,12 +71,12 @@ const SearchNomalScreen = () => {
         <Text style={styles.hotelName1}>{item.name}</Text>
         <View style={styles.locationContainer1}>
           <Icon name="map-marker" size={16} color="gray" />
-          <Text style={styles.locationText1}>{item.location}</Text>
+          <Text style={styles.locationText1}>{item.adress}</Text>
         </View>
-        <Text style={styles.hotelPrice1}>${item.price}/night</Text>
+        <Text style={styles.hotelPrice1}>{item.price}.000đ/Đêm</Text>
       </View>
-      <TouchableOpacity onPress={handleDetail} style={styles.bookButton1}>
-        <Text style={styles.bookButtonText1}>Detail</Text>
+      <TouchableOpacity style={styles.bookButton1}>
+        <Text onPress={() => handleDeleteHotel(item.id)} style={styles.bookButtonText1}>Xóa</Text>
       </TouchableOpacity>
     </View>
   );
@@ -120,6 +95,24 @@ const SearchNomalScreen = () => {
   const handleCompare = () => {
     navigation.navigate('Compare');
   };
+  // const handleSearchClick = () =>{
+  //   const data = {
+  //     name:searchName,
+  //     adress:searchAdress
+  //   }
+  //   console.log(data)
+  // }
+  const handleSearchClick = async () => {
+    try {
+      const response = await axios.get(`http://10.0.2.2:8080/hotel_app/hotel/search?name=${searchName}&adress=${searchAdress}`);
+      const hotels = response.data;
+      setHotels(hotels);
+      // Xử lý dữ liệu hotels ở đây
+    } catch (error) {
+      console.error('Đã xảy ra lỗi khi gọi API search:', error);
+      // Xử lý lỗi ở đây nếu cần
+    }
+  };
 
 
   return (
@@ -130,6 +123,8 @@ const SearchNomalScreen = () => {
           <TextInput
             style={styles.searchInput}
             placeholder="Nhập từ khóa tìm kiếm"
+            value={searchName}
+            onChangeText={handleNameSearch}
           //   value={searchText}
           //   onChangeText={setSearchText}
           //   onSubmitEditing={handleSearch}
@@ -139,7 +134,7 @@ const SearchNomalScreen = () => {
             underlayColor="#007bff"
           // onPress={handleSearch}
           >
-            <Icon name="search" size={14} color="white" />
+            <Icon onPress={handleSearchClick} name="search" size={14} color="white" />
           </TouchableHighlight>
         </View>
 
@@ -149,6 +144,8 @@ const SearchNomalScreen = () => {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Địa điểm"
+                value={searchAdress}
+                onChangeText={handleAdressSearch}
               //   value={searchText}
               //   onChangeText={setSearchText}
               //   onSubmitEditing={handleSearch}
@@ -178,38 +175,53 @@ const SearchNomalScreen = () => {
           </View>
         </TouchableHighlight>
       </View>
-      <ScrollView style={{ flex: 1, width: "100%" }}>
-        <View style={styles.containerHeaderBestHotels}>
-          <Text style={styles.headerBestHotelsText}>5 Kết quả tìm kiếm !</Text>
-          <Text
-            onPress={handleSeeAllBestHotels}
-            style={styles.linkBestHotelsText}
-          >
-            See All
-          </Text>
-        </View>
-        <View>
-          {bestHotels.map((item) => renderHotels({ item, key: item.id }))}
-        </View>
-      </ScrollView>
-      <View style={styles.tabBottom}>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderRightColor: "#d9d9d9" }} onPress={() => console.log("Home button pressed")}>
-          <Icon name="home" size={20} color="black" />
-          <Text>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderRightColor: "#d9d9d9" }} onPress={() => console.log("Booking button pressed")}>
-          <Icon name="calendar" size={20} color="black" />
-          <Text>Booking</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderRightColor: "#d9d9d9" }} onPress={() => console.log("About button pressed")}>
-          <Icon name="bell" size={20} color="black" />
-          <Text>Notification</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', }} onPress={handleCompare}>
-          <Icon name="user" size={20} color="black" />
-          <Text>Compare</Text>
-        </TouchableOpacity>
+      {/* <ScrollView style={{ flex: 1, width: "100%" }}> */}
+      <View style={styles.containerHeaderBestHotels}>
+        <Text style={styles.headerBestHotelsText}>{hotels.length} Kết quả tìm kiếm !</Text>
+        <Text
+          onPress={handleSeeAllBestHotels}
+          style={styles.linkBestHotelsText}
+        >
+          See All
+        </Text>
       </View>
+      {/* </ScrollView> */}
+      {/* <View>
+        <FlatList
+          data={hotels}
+          renderItem={renderHotels}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </View> */}
+      <ScrollView>
+        {hotels.map((item) => (
+          <View key={item.id} style={styles.hotelItem1}>
+          <Image source={{ uri: item.img }} style={styles.hotelImage1} />
+          <View style={styles.hotelTitle}>
+            <View style={styles.hotelRating1}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity key={star}>
+                  <Icon
+                    name={star <= item.star ? "star" : "star-o"}
+                    size={18}
+                    color={star <= item.star ? "gold" : "gray"}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.hotelName1}>{item.name}</Text>
+            <View style={styles.locationContainer1}>
+              <Icon name="map-marker" size={16} color="gray" />
+              <Text style={styles.locationText1}>{item.adress}</Text>
+            </View>
+            <Text style={styles.hotelPrice1}>{item.price}.000đ/Đêm</Text>
+          </View>
+          <TouchableOpacity style={styles.bookButton1}>
+            <Text style={styles.bookButtonText1}>Chi tiết</Text>
+          </TouchableOpacity>
+        </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -379,14 +391,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
-  toggleBtn:{
+  toggleBtn: {
     padding: 5,
-    paddingLeft:8,
-    paddingRight:8,
+    paddingLeft: 8,
+    paddingRight: 8,
     backgroundColor: "white",
     borderRadius: 20,
   },
-  toggleText:{
+  toggleText: {
     fontWeight: "600"
   }
 });

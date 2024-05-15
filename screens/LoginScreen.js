@@ -20,16 +20,19 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     // Kiểm tra tên người dùng và mật khẩu ở đây
-    if (username === "admin" && password === "password") {
+    if (username === "admin" && password === "admin") {
       Alert.alert("Đăng nhập thành công");
-      
+      navigation.navigate("Admin")
+    }else if(username === "b20dcat029" && password === "b20dcat029"){
+      Alert.alert("Đăng nhập thành công");
+      navigation.navigate("HomePage")
     } else {
       Alert.alert("Đăng nhập thất bại");
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "HomePage" }],
-    });
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: "HomePage" }],
+    // });
   };
 
   const handleCreateAccount = () => {

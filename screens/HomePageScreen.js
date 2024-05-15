@@ -10,6 +10,7 @@ import {
   TextInput,
   FlatList,
   Alert,
+  Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { TouchableHighlight } from "react-native";
@@ -190,13 +191,29 @@ const HomePageScreen = () => {
     navigation.navigate('SearchNomal');
   };
   const handleCompare = () => {
-    navigation.navigate('Compare');
+    navigation.navigate('Admin');
   };
+  // const [modalVisible, setModalVisible] = useState(false);
+
+  // const openModal = () => {
+  //   setModalVisible(true);
+  //   console.log("open")
+  // };
+
+  // const closeModal = () => {
+  //   setModalVisible(false);
+  // };
+  const Logout = () =>{
+    navigation.navigate('Login');
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Text style={styles.title}>Welcome, Quang Dũng!</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={styles.title}>Welcome, Quang Dũng!</Text>
+          <Text onPress={Logout} style={styles.title}>Đăng xuất</Text>
+        </View>
         <View style={styles.searchContainer1}>
           <TextInput
             style={styles.searchInput}
@@ -212,6 +229,18 @@ const HomePageScreen = () => {
           >
             <Icon name="search" size={14} color="white" />
           </TouchableHighlight>
+          <View>
+            {/* <Text onPress={openModal}>test btn</Text> */}
+            {/* <Modal
+              animationType="slide"
+              transparent={true}
+              // visible={modalVisible}
+              visible={true}
+              // onRequestClose={closeModal}
+            >
+              <Text>Modal</Text>
+            </Modal> */}
+          </View>
         </View>
       </View>
       <ScrollView style={{ flex: 1, width: "100%" }}>
@@ -251,24 +280,6 @@ const HomePageScreen = () => {
           {bestHotels.map((item) => renderHotels({ item, key: item.id }))}
         </View>
       </ScrollView>
-      <View style={styles.tabBottom}>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderRightColor: "#d9d9d9" }} onPress={() => console.log("Home button pressed")}>
-          <Icon name="home" size={20} color="black" />
-          <Text>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderRightColor: "#d9d9d9" }} onPress={() => console.log("Booking button pressed")}>
-          <Icon name="calendar" size={20} color="black" />
-          <Text>Booking</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderRightColor: "#d9d9d9" }} onPress={() => console.log("About button pressed")}>
-          <Icon name="bell" size={20} color="black" />
-          <Text>Notification</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ width: "25%", justifyContent: 'center', alignItems: 'center', }} onPress={handleCompare}>
-          <Icon name="user" size={20} color="black" />
-          <Text>Compare</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -294,9 +305,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "center",
-    alignSelf: "flex-start",
-    marginLeft: 18,
+    // textAlign: "center",
+    // alignSelf: "flex-start",
+    marginLeft: 28,
     color: "#fff",
     marginTop: 20,
   },

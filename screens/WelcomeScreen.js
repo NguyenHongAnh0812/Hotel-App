@@ -14,7 +14,7 @@ const WelcomeScreen = ({ navigation }) => {
     // Điều hướng sang trang đăng nhập
     navigation.reset({
       index: 0,
-      routes: [{ name: "HomePage" }],
+      routes: [{ name: "Login" }],
     });
   };
   const swiperRef = useRef(null);
