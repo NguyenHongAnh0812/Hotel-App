@@ -17,7 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { CheckBox } from "react-native-elements";
 
 const BookingScreen = () => {
-  const ip = "192.168.1.89";
+  const ip = "172.20.10.2";
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -30,6 +30,8 @@ const BookingScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
+  const [room, setRoom] = useState("");
+  const [bonus, setBonus] = useState(0);
   const [expiryDate, setExpiryDate] = useState("");
   const [isBookingSuccessVisible, setIsBookingSuccessVisible] = useState(false);
   const navigation = useNavigation();
@@ -50,7 +52,11 @@ const BookingScreen = () => {
       .then((response) => response.json())
       .then((data) => {
         setSelectedDate(data[0].date)
-        setNumber(data[0].guests) // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+        setNumber(data[0].guests)
+        setRoom(data[0].type)
+        if(room =='Luxury')setBonus(30)
+        else if(room == 'Medium')setBonus(20)
+        else setBonus(10) // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
       })
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
@@ -158,6 +164,12 @@ const BookingScreen = () => {
           <View style={styles.buttonContainer}>
             <Text style={styles.infoDescriptionLabel}>Guests :</Text>
             <Text style={styles.numberContainer}>{number}</Text>
+          </View>
+        </View>
+        <View style={styles.infoDescription}>
+          <View style={styles.buttonContainer}>
+            <Text style={styles.infoDescriptionLabel}>Room :</Text>
+            <Text style={styles.numberContainer}>{room}</Text>
           </View>
         </View>
         <View style={styles.containerHeader}>
@@ -270,17 +282,17 @@ const BookingScreen = () => {
           </View>
           <View style={styles.infoDescriptionPrice}>
             <Text style={styles.infoDescriptionTextPrice}>
-              Bonus ( {s} 2 guest )
+              Bonus
             </Text>
             <Text style={styles.infoDescriptionTextPrice}>
-              $ {Number(number - 2) * 20}
+              $ {Number(number - 2) * 20 +bonus}
             </Text>
           </View>
         </View>
         <View style={styles.infoDescriptionTotal}>
           <Text style={styles.infoDescriptionTextPrice}>Total</Text>
           <Text style={styles.infoDescriptionTextPrice}>
-            $ {Number(item.price) + Number(number - 2) * 20}
+            $ {Number(item.price) + Number(number - 2) * 20 + bonus}
           </Text>
         </View>
       </ScrollView>
@@ -288,7 +300,7 @@ const BookingScreen = () => {
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.price}>Grand Total</Text>
           <Text style={styles.price}>
-            $ {Number(item.price) + Number(number - 2) * 20}
+            $ {Number(item.price) + Number(number - 2) * 20 + bonus}
           </Text>
         </View>
         <TouchableOpacity onPress={handleCancel} style={styles.bookButton}>

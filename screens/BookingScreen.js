@@ -15,13 +15,15 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { CheckBox } from "react-native-elements";
+import { Picker } from "@react-native-picker/picker";
 
 const BookingScreen = () => {
-  const ip = "192.168.1.89"
+  const ip = "172.20.10.2";
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [nameVisa, setNameVisa] = useState("Visa card not added yet");
   const [number, setNumber] = useState(2);
+  const [bonus, setBonus] = useState(30);
   const [total, setTotal] = useState(0);
   const s = ">";
   const [isChecked, setIsChecked] = useState(false);
@@ -31,20 +33,38 @@ const BookingScreen = () => {
   const [expiryDate, setExpiryDate] = useState("");
   const [isBookingSuccessVisible, setIsBookingSuccessVisible] = useState(false);
   const navigation = useNavigation();
-  const route = useRoute()
-  const {hotelId} = route.params
-  const {userId} = route.params
+  const route = useRoute();
+  const { hotelId } = route.params;
+  const { userId } = route.params;
   const [item, setItem] = useState({});
+  const { hotel } = route.params;
+  const [selectedOption, setSelectedOption] = useState("Basic");
+
+useEffect(() => {
+  if (selectedOption === "Luxury") setBonus(30);
+  else if (selectedOption === "Medium") setBonus(20);
+  else setBonus(10);
+}, [selectedOption]);
+
+const handleOptionChange = (itemValue, itemIndex) => {
+  setSelectedOption(itemValue);
+};
   useEffect(() => {
-    fetch(`http://${ip}:3000/hotels/${hotelId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setItem(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-      });
+    setItem(hotel);
+    // if (selectedOption == "Luxury") setBonus(30);
+    // else if (selectedOption == "Medium") setBonus(20);
+    // else setBonus(10);
   }, []);
+  // useEffect(() => {
+  //   fetch(`http://${ip}:3000/hotels/${hotelId}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setItem(data); // Cập nhật state bestHotels với dữ liệu từ API endpoint "/hotels"
+  //     })
+  //     .catch((error) => {
+  //       console.error("Lỗi khi lấy dữ liệu:", error);
+  //     });
+  // }, []);
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
@@ -60,7 +80,8 @@ const BookingScreen = () => {
         date: selectedDate.toLocaleDateString(), // Thay đổi ngày tùy theo yêu cầu của bạn
         guests: number, // Thay đổi số lượng khách tùy theo yêu cầu của bạn
         total: Number(item.price) + Number(number - 2) * 20,
-        isCheck : "false" // Thay đổi tổng số tiền tùy theo yêu cầu của bạn
+        isCheck: "false",
+        type: selectedOption, // Thay đổi tổng số tiền tùy theo yêu cầu của bạn
       }),
     })
       .then((response) => response.json())
@@ -80,7 +101,7 @@ const BookingScreen = () => {
     else if (isChecked == true && nameVisa == "Visa card not added yet")
       Alert.alert("Vui lòng add thẻ visa");
     else setIsBookingSuccessVisible(!isBookingSuccessVisible);
-  }
+  };
   // setTotal(item.price)
   const handleAddToCart = () => {
     setNameVisa(cardName);
@@ -114,12 +135,10 @@ const BookingScreen = () => {
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
   };
-  const handleBackToHome = () => {
-    
-  };
+  const handleBackToHome = () => {};
   const handleBookingSuccess = () => {
     setIsBookingSuccessVisible(false);
-    navigation.navigate("HomePage" , {userId: userId});
+    navigation.navigate("HomePage", { userId: userId });
   };
 
   return (
@@ -202,6 +221,17 @@ const BookingScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+        <View style={styles.infoDescription}>
+          <Text style={styles.infoDescriptionLabel}>Type :</Text>
+          <Picker
+            selectedValue={selectedOption}
+            onValueChange={handleOptionChange}
+          >
+            <Picker.Item label="Luxury" value="Luxury" />
+            <Picker.Item label="Medium" value="Medium" />
+            <Picker.Item label="Basic" value="Basic" />
+          </Picker>
         </View>
         <View style={styles.containerHeader}>
           <Text style={styles.headerText}>Chose how to pay</Text>
@@ -347,17 +377,17 @@ const BookingScreen = () => {
           </View>
           <View style={styles.infoDescriptionPrice}>
             <Text style={styles.infoDescriptionTextPrice}>
-              Bonus ( {s} 2 guest )
+              Bonus
             </Text>
             <Text style={styles.infoDescriptionTextPrice}>
-              $ {Number(number - 2) * 20}
+              $ {Number(number - 2) * 20 +bonus}
             </Text>
           </View>
         </View>
         <View style={styles.infoDescriptionTotal}>
           <Text style={styles.infoDescriptionTextPrice}>Total</Text>
           <Text style={styles.infoDescriptionTextPrice}>
-            $ {Number(item.price) + Number(number - 2) * 20}
+            $ {Number(item.price) + Number(number - 2) * 20 +bonus}
           </Text>
         </View>
       </ScrollView>
@@ -365,13 +395,10 @@ const BookingScreen = () => {
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.price}>Grand Total</Text>
           <Text style={styles.price}>
-            $ {Number(item.price) + Number(number - 2) * 20}
+            $ {Number(item.price) + Number(number - 2) * 20+bonus}
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={handlePayNow}
-          style={styles.bookButton}
-        >
+        <TouchableOpacity onPress={handlePayNow} style={styles.bookButton}>
           <Text style={styles.bookButtonText}>Pay Now</Text>
         </TouchableOpacity>
         <Modal
@@ -394,9 +421,7 @@ const BookingScreen = () => {
                 onPress={handleBookingSuccess}
                 style={styles.okButton}
               >
-                <Text style={styles.okButtonText}>
-                  OK
-                </Text>
+                <Text style={styles.okButtonText}>OK</Text>
               </TouchableOpacity>
             </View>
           </View>

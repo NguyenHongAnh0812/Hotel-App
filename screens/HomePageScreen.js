@@ -20,7 +20,7 @@ import WelcomeScreen from "./WelcomeScreen";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 const HomePageScreen = () => {
-  const ip = "192.168.1.89";
+  const ip = "172.20.10.2";
   const [index, setIndex] = useState(0);
   const route = useRoute();
   const { userId } = route.params;
@@ -110,7 +110,7 @@ const HomePageScreen = () => {
         <Icon name="map-marker" size={16} color="gray" />
         <Text style={styles.locationText}>{item.location}</Text>
       </View>
-      <Text style={styles.hotelPrice}>${item.price}/night</Text>
+      <Text style={styles.hotelPrice}>{item.price} VND/night</Text>
       <TouchableOpacity
         onPress={() =>
           navigation.navigate("HotelDetail", {
@@ -145,7 +145,7 @@ const HomePageScreen = () => {
           <Icon name="map-marker" size={16} color="gray" />
           <Text style={styles.locationText1}>{item.location}</Text>
         </View>
-        <Text style={styles.hotelPrice1}>${item.price}/night</Text>
+        <Text style={styles.hotelPrice1}>{item.price} VND/night</Text>
       </View>
       <TouchableOpacity
         onPress={() =>

@@ -14,7 +14,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 const HotelDetailScreen = () => {
-  const ip = "192.168.1.89"
+  const ip = "172.20.10.2"
   const navigation = useNavigation();
   const route = useRoute();
   const { hotelId } = route.params;
@@ -48,7 +48,7 @@ const HotelDetailScreen = () => {
   }, []);
   const handleSelectDate = () => {
     if (check == true)
-      navigation.navigate("Booking", { hotelId: hotelId, userId: userId });
+      navigation.navigate("Booking", { hotelId: hotelId, userId: userId , hotel: hotel});
     else Alert.alert("Bạn đã đặt phòng này và chưa check-out");
     // setShowDatePicker(true);
   };

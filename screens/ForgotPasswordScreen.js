@@ -4,7 +4,7 @@ import { Text, Input } from 'react-native-elements';
 import { AntDesign } from 'react-native-vector-icons';
 import { useNavigation } from '@react-navigation/native';
 const ForgotPasswordScreen = () => {
-  const ip = "192.168.1.89"
+  const ip = "172.20.10.2"
   const [email, setEmail] = useState('');
   const navigation = useNavigation();
   const handleResetPassword = () => {

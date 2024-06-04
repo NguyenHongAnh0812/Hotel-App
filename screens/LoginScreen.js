@@ -14,19 +14,19 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
-  const ip = "192.168.1.89"
+  const ip = "172.20.10.2"
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
   const handleLogin = () => {
-    // Kiểm tra tên người dùng và mật khẩu ở đây
+   
     if (!username || !password) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin");
       return;
     }
 
-    // Gửi thông tin đăng nhập đến API để xác minh
+    
     fetch(`http://${ip}:3000/login`, {
       method: "POST",
       headers: {
@@ -37,8 +37,7 @@ const LoginScreen = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          // Lưu thông tin đăng nhập vào local storage hoặc Redux store
-          // Để sử dụng trong toàn bộ ứng dụng
+         
 
           // Reset các trường nhập liệu
           setUsername("");
@@ -94,7 +93,7 @@ const LoginScreen = () => {
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={styles.title}>Let's get you Login!</Text>
+      <Text style={styles.title}>Let's get your Login!</Text>
       <Text style={{ fontSize: 15, color: "#a9a9a9", marginBottom: 20 }}>
         Enter your information below
       </Text>

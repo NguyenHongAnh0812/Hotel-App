@@ -11,7 +11,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 const ListBookingScreen = () => {
-  const ip = "192.168.1.89";
+  const ip = "172.20.10.2";
   const navigation = useNavigation();
   const [bestHotels, setBestHotels] = useState([]);
   const [bestHotels1, setBestHotels1] = useState([]);

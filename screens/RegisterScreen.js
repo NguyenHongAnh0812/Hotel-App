@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 const RegisterScreen = () => {
-  const ip = "192.168.1.89";
+  const ip = "172.20.10.2";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +21,7 @@ const RegisterScreen = () => {
   const navigation = useNavigation();
   const handleRegister = () => {
     if (name == "" || email == "" || password == "" || phoneNumber == "") {
-      Alert.alert("Vui long điền đầy đủ các thông tin");
+      Alert.alert("Vui lòng điền đầy đủ các thông tin");
     } else {
       fetch(`http://${ip}:3000/register`, {
         method: "POST",
@@ -35,16 +35,23 @@ const RegisterScreen = () => {
           phone_number: phoneNumber,
         }),
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Registration successful:", data);
-          Alert.alert("Bạn đã đăng ký thành công. Hãy đăng nhập !")
-          navigation.navigate("Login");
+        .then((response) => {
+          if (response.status === 200) {
+            // Đăng ký thành công
+            Alert.alert("Bạn đã đăng ký thành công. Hãy đăng nhập !");
+            navigation.navigate("Login");
+          } else if (response.status === 400) {
+            // Email đã tồn tại
+            Alert.alert("Email đã tồn tại");
+          } else {
+            // Xử lý lỗi khác
+            Alert.alert("Đăng ký thất bại");
+          }
         })
         .catch((error) => {
           console.error("Error during registration:", error);
+          Alert.alert("Đăng ký thất bại");
         });
-     
     }
   };
   const handleLogin = () => {

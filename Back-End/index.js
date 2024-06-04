@@ -47,15 +47,29 @@ app.post('/login', (req, res) => {
 app.post('/register', (req, res) => {
   // Extract the registration data from the request body
   const { name, email, password, phone_number } = req.body;
-  const query = `INSERT INTO users (name, email, password, phone_number) VALUES (?, ?, ?, ?)`;
-
-  // Execute the query with the registration data
-  connection.query(query, [name, email, password, phone_number], (error, results) => {
+  
+  // Check if email already exists
+  const checkEmailQuery = 'SELECT * FROM users WHERE email = ?';
+  connection.query(checkEmailQuery, [email], (error, results) => {
     if (error) {
-      console.error('Error inserting data:', error);
+      console.error('Error checking email:', error);
       res.status(500).json({ message: 'An error occurred during registration.' });
     } else {
-      res.status(200).json({ message: 'Registration successful!' });
+      if (results.length > 0) {
+        // Email already exists
+        res.status(400).json({ message: 'Email already exists.' });
+      } else {
+        // Email does not exist, proceed with registration
+        const insertUserQuery = 'INSERT INTO users (name, email, password, phone_number) VALUES (?, ?, ?, ?)';
+        connection.query(insertUserQuery, [name, email, password, phone_number], (error, results) => {
+          if (error) {
+            console.error('Error inserting data:', error);
+            res.status(500).json({ message: 'An error occurred during registration.' });
+          } else {
+            res.status(200).json({ message: 'Registration successful!' });
+          }
+        });
+      }
     }
   });
 });
@@ -112,17 +126,17 @@ app.get('/checkbookings/:idHotel', (req, res) => {
     }
 
     if (bookingResults.length > 0) {
-      res.json(false); // Có booking chưa được kiểm tra
+      res.json(false); 
     } else {
-      res.json(true); // Không có booking chưa được kiểm tra
+      res.json(true); 
     }
   });
 });
 app.post('/add-booking', (req, res) => {
-  const { idUser, idHotel, date, guests, total, isCheck } = req.body;
+  const { idUser, idHotel, date, guests, total, isCheck, type } = req.body;
 
-  // Truy vấn INSERT vào bảng booking
-  const query = `INSERT INTO booking (idUser, idHotel, date, guests, total, isCheck) VALUES ('${idUser}', '${idHotel}', '${date}', '${guests}', '${total}', '${isCheck}')`;
+ 
+  const query = `INSERT INTO booking (idUser, idHotel, date, guests, total, isCheck, type) VALUES ('${idUser}', '${idHotel}', '${date}', '${guests}', '${total}', '${isCheck}', '${type}')`;
   connection.query(query, (error, results) => {
     if (error) {
       console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
